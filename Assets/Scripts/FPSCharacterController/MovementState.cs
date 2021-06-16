@@ -18,8 +18,13 @@ namespace FPSCharacterController
         public virtual void OnStateFixedUpdate()
         {
             ApplyLateralMovement();
+            CheckIfGrounded();
         }
         public virtual void OnStateExit(){}
+
+        public virtual void OnGroundedCheckPassed() => controller.ChangeState(controller.groundedStanding);
+        public virtual void OnGroundedCheckFailed() => controller.ChangeState(controller.airborneStanding);
+        
 
         public virtual void Look(Vector2 lookVector)
         {
@@ -35,6 +40,15 @@ namespace FPSCharacterController
         {
             Vector3 localSpaceLateralVector = controller.transform.TransformDirection(controller.lateralMoveVector);
             controller.playerRB.AddForce(localSpaceLateralVector, ForceMode.VelocityChange);
+        }
+
+        public void CheckIfGrounded()
+        {
+            float radius = 0.95f;
+            float verticalOffset = -0.05f;
+            Vector3 center = controller.transform.position - (controller.transform.up * verticalOffset);
+            if (Physics.CheckSphere(center, radius, controller.groundedCheckLayers, QueryTriggerInteraction.Ignore)) OnGroundedCheckPassed();
+            else OnGroundedCheckFailed();
         }
     }
 }

@@ -11,6 +11,8 @@ namespace FPSCharacterController
         public Camera playerCamera;
         [HideInInspector] public Rigidbody playerRB;
 
+        public LayerMask groundedCheckLayers;
+
         // Camera Pitch
         public float cameraPitch_Current = 0.0f;
         public float cameraPitch_Max = 90.0f;
@@ -25,7 +27,9 @@ namespace FPSCharacterController
         
 
         //State machine states
-        private GroundedStanding groundedStanding;        
+        public GroundedStanding groundedStanding;
+        public AirborneStanding airborneStanding;
+
         private MovementState currentState;
 
 
@@ -33,6 +37,7 @@ namespace FPSCharacterController
         {
             playerRB = GetComponent<Rigidbody>();
             groundedStanding = new GroundedStanding(this);
+            airborneStanding = new AirborneStanding(this);
             currentState = groundedStanding;
         }
 
@@ -61,6 +66,8 @@ namespace FPSCharacterController
 
         public void ChangeState(MovementState stateToChangeTo)
         {
+            if (currentState == stateToChangeTo) return;
+
             currentState.OnStateExit();
             currentState = stateToChangeTo;
             currentState.OnStateEnter();

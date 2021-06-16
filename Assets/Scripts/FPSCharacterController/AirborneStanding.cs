@@ -4,19 +4,18 @@ using UnityEngine;
 
 namespace FPSCharacterController
 {
-    public class GroundedStanding : MovementState
+    public class AirborneStanding : MovementState
     {
-        public GroundedStanding(FPSController controller) : base(controller) {}
-
-        public override void OnGroundedCheckPassed() {}
-
+        public AirborneStanding(FPSController controller) : base(controller) {}
+        
         public override void OnStateEnter()
         {
-            Debug.Log("I'm on the ground!");
+            Debug.Log("I'm in the air!");
         }
 
+        public override void OnGroundedCheckFailed() {}
+
         /*
-        public override void OnStateEnter(){}
         public override void OnStateUpdate(){}
         public override void OnStateExit(){}
         */

@@ -239,6 +239,9 @@ MonoBehaviour:
   playerInput: {fileID: 1552085820994727106}
   playerCamera: {fileID: 5651321606145077037}
   playerRB: {fileID: 0}
+  groundedCheckLayers:
+    serializedVersion: 2
+    m_Bits: 1
   cameraPitch_Current: 0
   cameraPitch_Max: 90
   cameraPitch_Min: -90

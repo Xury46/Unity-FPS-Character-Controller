@@ -15,6 +15,8 @@ namespace FPSCharacterController
 
         public override void OnGroundedCheckFailed() {}
 
+        public override void ApplyJump() {}
+
         /*
         public override void OnStateUpdate(){}
         public override void OnStateExit(){}

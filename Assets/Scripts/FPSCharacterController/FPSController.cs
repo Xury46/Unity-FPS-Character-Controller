@@ -24,6 +24,8 @@ namespace FPSCharacterController
         // Movement
         public Vector3 lateralMoveVector;
         public float lateralMoveSpeed = 50.0f;
+
+        public float jumpForce = 3.0f;
         
 
         //State machine states
@@ -62,6 +64,11 @@ namespace FPSCharacterController
         {
             Vector2 inputLook = context.ReadValue<Vector2>();
             currentState.Look(inputLook);
+        }
+
+        public void Jump(InputAction.CallbackContext context)
+        {
+            currentState.ApplyJump();
         }
 
         public void ChangeState(MovementState stateToChangeTo)

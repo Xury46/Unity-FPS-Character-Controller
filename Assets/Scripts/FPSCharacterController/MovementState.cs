@@ -42,11 +42,17 @@ namespace FPSCharacterController
             controller.playerRB.AddForce(localSpaceLateralVector, ForceMode.VelocityChange);
         }
 
+        public virtual void ApplyJump()
+        {
+            controller.playerRB.AddForce(controller.transform.up * controller.jumpForce, ForceMode.VelocityChange);
+        }
+
         public void CheckIfGrounded()
         {
             float radius = 0.95f;
             float verticalOffset = -0.05f;
-            Vector3 center = controller.transform.position - (controller.transform.up * verticalOffset);
+            verticalOffset += radius * 0.5f;
+            Vector3 center = controller.transform.position + (controller.transform.up * verticalOffset);
             if (Physics.CheckSphere(center, radius, controller.groundedCheckLayers, QueryTriggerInteraction.Ignore)) OnGroundedCheckPassed();
             else OnGroundedCheckFailed();
         }

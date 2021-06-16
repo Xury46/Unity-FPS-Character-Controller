@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5408426915401955858}
   - component: {fileID: 8573249082748094509}
   - component: {fileID: 1957114590418012484}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Art
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 7903578257249890864}
   - component: {fileID: 1610588819573398084}
   - component: {fileID: 1547543459}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -288,7 +288,7 @@ GameObject:
   - component: {fileID: 5651321606145077037}
   - component: {fileID: 5651321606145077036}
   - component: {fileID: 7188877798266621618}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlayerCamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}

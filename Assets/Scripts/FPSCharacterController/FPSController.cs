@@ -43,6 +43,12 @@ namespace FPSCharacterController
             currentState = groundedStanding;
         }
 
+        private void Start()
+        {            
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
         // Update is called once per frame
         void Update()
         {

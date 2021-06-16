@@ -9,17 +9,22 @@ namespace FPSCharacterController
     {
         [SerializeField] private PlayerInput playerInput;
         public Camera playerCamera;
+        private float cameraVerticalOffset;
         [HideInInspector] public Rigidbody playerRB;
 
         public LayerMask groundedCheckLayers;
 
         // Camera Pitch
-        public float cameraPitch_Current = 0.0f;
-        public float cameraPitch_Max = 90.0f;
-        public float cameraPitch_Min = -90.0f;
-
-        public bool invertCameraPitch = false;
+        public float pitch_Current = 0.0f;
+        public float pitch_Max = 90.0f;
+        public float pitch_Min = -90.0f;
+        public bool pitch_invert = false;
+        
+        // Camera Yaw
+        public float yaw_Current = 0.0f;
+        
         public float lookSensitivity = 0.25f;
+
 
         // Movement
         public Vector3 lateralMoveVector;
@@ -47,11 +52,14 @@ namespace FPSCharacterController
         {            
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+
+            cameraVerticalOffset = playerCamera.transform.localPosition.y; // Cache the original camera height
+            playerCamera.transform.parent = null; // Detatch the camera to avoid stutter
         }
 
-        // Update is called once per frame
         void Update()
         {
+            playerCamera.transform.position = transform.position + transform.up * cameraVerticalOffset; // Make the detatched camera follow the position of the player
             currentState.OnStateUpdate();
         }
 

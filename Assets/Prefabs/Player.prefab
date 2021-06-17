@@ -254,7 +254,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7903578257249890864}
         m_TargetAssemblyTypeName: FPSCharacterController.FPSController, Assembly-CSharp
-        m_MethodName: Jump
+        m_MethodName: JumpInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -266,6 +266,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 553acd47-b59f-4218-8d5d-c261a6788a75
     m_ActionName: Player/Jump[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7903578257249890864}
+        m_TargetAssemblyTypeName: FPSCharacterController.FPSController, Assembly-CSharp
+        m_MethodName: CrouchInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: bdec4428-31c7-499b-9151-1effcfd14703
+    m_ActionName: Player/Crouch[/Keyboard/leftCtrl,/Keyboard/c]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: Player
@@ -287,6 +303,7 @@ MonoBehaviour:
   playerCamera: {fileID: 5651321606145077037}
   playerRB: {fileID: 0}
   orientation: {fileID: 1395532482}
+  capsuleCollider: {fileID: 1547543459}
   groundedCheckLayers:
     serializedVersion: 2
     m_Bits: 1

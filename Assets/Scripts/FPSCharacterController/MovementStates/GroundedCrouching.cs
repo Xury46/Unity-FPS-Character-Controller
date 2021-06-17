@@ -4,9 +4,12 @@ using UnityEngine;
 
 namespace FPSCharacterController
 {
-    public class GroundedStanding : MovementState
+    public class GroundedCrouching : MovementState
     {
-        public GroundedStanding(FPSController controller, FPSControllerSettings settings) : base(controller, settings) {}
+        public GroundedCrouching(FPSController controller, FPSControllerSettings settings) : base(controller, settings)
+        {
+            height_Target = settings.height_Crouching;
+        }
 
         // public override void OnStateEnter(){}
         // public override void OnStateUpdate(){}
@@ -14,6 +17,6 @@ namespace FPSCharacterController
 
         public override void OnGroundedCheckPassed() {}
 
-        public override void Stand() {}
+        public override void Crouch() {}
     }
 }

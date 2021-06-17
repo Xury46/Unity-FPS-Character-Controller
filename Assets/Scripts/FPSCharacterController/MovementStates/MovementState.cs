@@ -6,15 +6,23 @@ namespace FPSCharacterController
 {
     public abstract class MovementState
     {
-        FPSController controller;
+        protected FPSController controller;
+        protected FPSControllerSettings settings;
+        protected FPSControllerSettings.HeightSettings height_Target;
 
-        public MovementState(FPSController controller)
+        public MovementState(FPSController controller, FPSControllerSettings settings)
         {
             this.controller = controller;
+            this.settings = settings;
+            height_Target = settings.height_Standing; // Set the default target to standing, other states can override their constructors to use crouching height
         }
 
         public virtual void OnStateEnter(){}
-        public virtual void OnStateUpdate(){}
+        public virtual void OnStateUpdate()
+        {
+            if (settings.height_Current.cameraHeight != height_Target.cameraHeight) BlendHeight();
+        }
+
         public virtual void OnStateFixedUpdate()
         {
             //ApplyLook();
@@ -33,6 +41,17 @@ namespace FPSCharacterController
             controller.orientation.localRotation = Quaternion.Euler(Vector3.up * controller.yaw_Current);
         }
 
+        protected void BlendHeight()
+        {
+            float blendSpeed = 15.0f * Time.deltaTime;
+
+            settings.height_Current.cameraHeight = Mathf.Lerp(settings.height_Current.cameraHeight, height_Target.cameraHeight, blendSpeed);
+            settings.height_Current.capsuleHeight = Mathf.Lerp(settings.height_Current.capsuleHeight, height_Target.capsuleHeight, blendSpeed);
+
+            controller.capsuleCollider.height = settings.height_Current.capsuleHeight;
+            controller.capsuleCollider.center = Vector3.up * settings.height_Current.capsuleHeight * 0.5f;
+        }
+
         //public void ApplyLook()
         //{
             //controller.playerRB.MoveRotation(Quaternion.Euler(controller.transform.up * controller.yaw_Current));
@@ -47,6 +66,16 @@ namespace FPSCharacterController
         public virtual void ApplyJump()
         {
             controller.playerRB.AddForce(controller.orientation.up * controller.jumpForce, ForceMode.VelocityChange);
+        }
+
+        public virtual void Crouch()
+        {
+            controller.ChangeState(controller.groundedCrouching);
+        }
+        
+        public virtual void Stand()
+        {
+            controller.ChangeState(controller.groundedStanding);
         }
 
         public void CheckIfGrounded()

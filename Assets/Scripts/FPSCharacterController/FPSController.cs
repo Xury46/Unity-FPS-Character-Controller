@@ -5,15 +5,42 @@ using UnityEngine.InputSystem;
 
 namespace FPSCharacterController
 {
+    [System.Serializable]
+    public class FPSControllerSettings
+    {
+        public class HeightSettings
+        {
+            public HeightSettings(float cameraHeight, float capsuleHeight)
+            {
+                this.cameraHeight = cameraHeight;
+                this.capsuleHeight = capsuleHeight;
+            }
+
+            public HeightSettings(HeightSettings settingsToCopy)
+            {
+                this.cameraHeight = settingsToCopy.cameraHeight;
+                this.capsuleHeight = settingsToCopy.capsuleHeight;
+            }
+            
+            public float cameraHeight;
+            public float capsuleHeight;
+        }
+
+        public HeightSettings height_Standing = new HeightSettings(1.75f, 2.0f);
+        public HeightSettings height_Crouching = new HeightSettings(1.25f, 1.5f);
+        public HeightSettings height_Current;
+    }
+
     public class FPSController : MonoBehaviour
     {
+        [SerializeField] private FPSControllerSettings settings;
         [SerializeField] private PlayerInput playerInput;
         public Camera playerCamera;
-        private float cameraVerticalOffset;
         [HideInInspector] public Rigidbody playerRB;
         public Transform orientation;
+        public CapsuleCollider capsuleCollider;
 
-        public LayerMask groundedCheckLayers;
+        public LayerMask groundedCheckLayers;        
 
         // Camera Pitch
         public float pitch_Current = 0.0f;
@@ -41,6 +68,7 @@ namespace FPSCharacterController
 
         //State machine states
         public GroundedStanding groundedStanding;
+        public GroundedCrouching groundedCrouching;
         public AirborneStanding airborneStanding;
 
         private MovementState currentState;
@@ -49,17 +77,19 @@ namespace FPSCharacterController
         private void Awake()
         {
             playerRB = GetComponent<Rigidbody>();
-            groundedStanding = new GroundedStanding(this);
-            airborneStanding = new AirborneStanding(this);
+            groundedStanding = new GroundedStanding(this, settings);
+            groundedCrouching = new GroundedCrouching(this, settings);
+            airborneStanding = new AirborneStanding(this, settings);
             currentState = groundedStanding;
+
+            settings.height_Current = new FPSControllerSettings.HeightSettings(settings.height_Standing);
         }
 
         private void Start()
-        {            
+        {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
 
-            cameraVerticalOffset = playerCamera.transform.localPosition.y; // Cache the original camera height
             playerCamera.transform.parent = null; // Detatch the camera to avoid stutter
         }
 
@@ -67,7 +97,7 @@ namespace FPSCharacterController
         {
             InputSystem.Update();
 
-            playerCamera.transform.position = orientation.position + orientation.up * cameraVerticalOffset; // Make the detatched camera follow the position of the player
+            playerCamera.transform.position = orientation.position + orientation.up * settings.height_Current.cameraHeight; // Make the detatched camera follow the position of the player
             currentState.OnStateUpdate();
             
             if (smoothMouseInput) SmoothLook();
@@ -125,9 +155,15 @@ namespace FPSCharacterController
             currentState.ApplyLook();
         }
 
-        public void Jump(InputAction.CallbackContext context)
+        public void JumpInput(InputAction.CallbackContext context)
         {
             currentState.ApplyJump();
+        }
+
+        public void CrouchInput(InputAction.CallbackContext context)
+        {
+            if (context.started) currentState.Crouch();
+            else if (context.canceled) currentState.Stand();
         }
 
         public void ChangeState(MovementState stateToChangeTo)

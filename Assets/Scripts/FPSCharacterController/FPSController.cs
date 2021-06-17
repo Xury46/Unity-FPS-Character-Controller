@@ -29,6 +29,7 @@ namespace FPSCharacterController
         public float yaw_Target;
         
         public float lookSensitivity = 0.25f;
+        public bool smoothMouseInput = true;
         public float lookSmoothing = 0.5f;
 
         // Movement
@@ -64,9 +65,13 @@ namespace FPSCharacterController
 
         void Update()
         {
-            SmoothLook();
+            InputSystem.Update();
+
             playerCamera.transform.position = orientation.position + orientation.up * cameraVerticalOffset; // Make the detatched camera follow the position of the player
             currentState.OnStateUpdate();
+            
+            if (smoothMouseInput) SmoothLook();
+            else Look();
         }
 
         void FixedUpdate()
@@ -83,14 +88,16 @@ namespace FPSCharacterController
         public void LookInput(InputAction.CallbackContext context)
         {
             Vector2 inputLook = context.ReadValue<Vector2>();
-            //inputLook *= Time.deltaTime;
+            Debug.Log(inputLook);
 
             int invert = pitch_Invert ? 1 : -1;
-            pitch_Target += (inputLook.y * lookSensitivity * invert);
+            //pitch_Target += inputLook.y * lookSensitivity * Time.deltaTime * invert;
+            pitch_Target += inputLook.y * lookSensitivity * invert;
             pitch_Target = Mathf.Clamp(pitch_Target, pitch_Min, pitch_Max);
 
             // Keep yaw clamped within -180 and 180 degrees
-            yaw_Target += (inputLook.x * lookSensitivity);
+            //yaw_Target += inputLook.x * lookSensitivity * Time.deltaTime;
+            yaw_Target += inputLook.x * lookSensitivity;
             if (yaw_Target <= -180.0f) yaw_Target += 360.0f;
             else if (yaw_Target > 180.0f) yaw_Target -= 360.0f;
         }
@@ -107,6 +114,15 @@ namespace FPSCharacterController
             yaw_Current = Mathf.SmoothDamp(yaw_Current, yaw_Target, ref yaw_Velocity, lookSmoothing);
 
             currentState.ApplyLook();      
+        }
+
+        private void Look()
+        {
+            pitch_Current = pitch_Target;
+            
+            yaw_Current = yaw_Target;
+            
+            currentState.ApplyLook();
         }
 
         public void Jump(InputAction.CallbackContext context)

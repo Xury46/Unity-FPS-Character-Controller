@@ -11,6 +11,7 @@ namespace FPSCharacterController
         public Camera playerCamera;
         private float cameraVerticalOffset;
         [HideInInspector] public Rigidbody playerRB;
+        public Transform orientation;
 
         public LayerMask groundedCheckLayers;
 
@@ -64,7 +65,7 @@ namespace FPSCharacterController
         void Update()
         {
             SmoothLook();
-            playerCamera.transform.position = transform.position + transform.up * cameraVerticalOffset; // Make the detatched camera follow the position of the player
+            playerCamera.transform.position = orientation.position + orientation.up * cameraVerticalOffset; // Make the detatched camera follow the position of the player
             currentState.OnStateUpdate();
         }
 
@@ -82,6 +83,7 @@ namespace FPSCharacterController
         public void LookInput(InputAction.CallbackContext context)
         {
             Vector2 inputLook = context.ReadValue<Vector2>();
+            //inputLook *= Time.deltaTime;
 
             int invert = pitch_Invert ? 1 : -1;
             pitch_Target += (inputLook.y * lookSensitivity * invert);

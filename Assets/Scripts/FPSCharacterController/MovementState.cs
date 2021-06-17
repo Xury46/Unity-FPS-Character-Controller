@@ -30,7 +30,7 @@ namespace FPSCharacterController
         public virtual void ApplyLook()
         {
             controller.playerCamera.transform.localRotation = Quaternion.Euler(new Vector3(controller.pitch_Current, controller.yaw_Current, 0.0f));
-            controller.transform.rotation = Quaternion.Euler(Vector3.up * controller.yaw_Current);
+            controller.orientation.localRotation = Quaternion.Euler(Vector3.up * controller.yaw_Current);
         }
 
         //public void ApplyLook()
@@ -40,13 +40,13 @@ namespace FPSCharacterController
 
         public void ApplyLateralMovement()
         {
-            Vector3 localSpaceLateralVector = controller.transform.TransformDirection(controller.lateralMoveVector);
+            Vector3 localSpaceLateralVector = controller.orientation.TransformDirection(controller.lateralMoveVector);
             controller.playerRB.AddForce(localSpaceLateralVector, ForceMode.VelocityChange);
         }
 
         public virtual void ApplyJump()
         {
-            controller.playerRB.AddForce(controller.transform.up * controller.jumpForce, ForceMode.VelocityChange);
+            controller.playerRB.AddForce(controller.orientation.up * controller.jumpForce, ForceMode.VelocityChange);
         }
 
         public void CheckIfGrounded()

@@ -17,7 +17,7 @@ namespace FPSCharacterController
         public virtual void OnStateUpdate(){}
         public virtual void OnStateFixedUpdate()
         {
-            ApplyLook();
+            //ApplyLook();
             ApplyLateralMovement();
             CheckIfGrounded();
         }
@@ -27,24 +27,16 @@ namespace FPSCharacterController
         public virtual void OnGroundedCheckFailed() => controller.ChangeState(controller.airborneStanding);
         
 
-        public virtual void Look(Vector2 lookVector)
+        public virtual void ApplyLook()
         {
-            int invert = controller.pitch_invert ? 1 : -1;
-            controller.pitch_Current += (lookVector.y * invert * controller.lookSensitivity);
-            controller.pitch_Current = Mathf.Clamp(controller.pitch_Current, controller.pitch_Min, controller.pitch_Max);
-
-            controller.yaw_Current += lookVector.x * controller.lookSensitivity;
-            controller.yaw_Current = Mathf.Repeat(controller.yaw_Current, 360f);
-
             controller.playerCamera.transform.localRotation = Quaternion.Euler(new Vector3(controller.pitch_Current, controller.yaw_Current, 0.0f));
-
-            //controller.transform.rotation = Quaternion.Euler(Vector3.up * controller.yaw_Current);
+            controller.transform.rotation = Quaternion.Euler(Vector3.up * controller.yaw_Current);
         }
 
-        public void ApplyLook()
-        {
-            controller.playerRB.MoveRotation(Quaternion.Euler(controller.transform.up * controller.yaw_Current));
-        }
+        //public void ApplyLook()
+        //{
+            //controller.playerRB.MoveRotation(Quaternion.Euler(controller.transform.up * controller.yaw_Current));
+        //}
 
         public void ApplyLateralMovement()
         {

@@ -18,13 +18,17 @@ namespace FPSCharacterController
         public float pitch_Current = 0.0f;
         public float pitch_Max = 90.0f;
         public float pitch_Min = -90.0f;
-        public bool pitch_invert = false;
+        public bool pitch_Invert = false;
+        private float pitch_Velocity; // continuously modified by the smooth damp
+        public float pitch_Target;
         
         // Camera Yaw
         public float yaw_Current = 0.0f;
+        private float yaw_Velocity; // continuously modified by the smooth damp
+        public float yaw_Target;
         
         public float lookSensitivity = 0.25f;
-
+        public float lookSmoothing = 0.5f;
 
         // Movement
         public Vector3 lateralMoveVector;
@@ -59,6 +63,7 @@ namespace FPSCharacterController
 
         void Update()
         {
+            SmoothLook();
             playerCamera.transform.position = transform.position + transform.up * cameraVerticalOffset; // Make the detatched camera follow the position of the player
             currentState.OnStateUpdate();
         }
@@ -74,10 +79,32 @@ namespace FPSCharacterController
             lateralMoveVector = new Vector3(inputMovement.x, 0.0f, inputMovement.y) * lateralMoveSpeed * Time.fixedDeltaTime;
         }
 
-        public void Look(InputAction.CallbackContext context)
+        public void LookInput(InputAction.CallbackContext context)
         {
             Vector2 inputLook = context.ReadValue<Vector2>();
-            currentState.Look(inputLook);
+
+            int invert = pitch_Invert ? 1 : -1;
+            pitch_Target += (inputLook.y * lookSensitivity * invert);
+            pitch_Target = Mathf.Clamp(pitch_Target, pitch_Min, pitch_Max);
+
+            // Keep yaw clamped within -180 and 180 degrees
+            yaw_Target += (inputLook.x * lookSensitivity);
+            if (yaw_Target <= -180.0f) yaw_Target += 360.0f;
+            else if (yaw_Target > 180.0f) yaw_Target -= 360.0f;
+        }
+
+        private void SmoothLook()
+        {   
+            pitch_Current = Mathf.SmoothDamp(pitch_Current, pitch_Target, ref pitch_Velocity, lookSmoothing);            
+
+            // Handle yaw smooth damping as it crosses over 360 degrees
+            float yaw_Delta = yaw_Current - yaw_Target;
+            if (yaw_Delta <= -180.0f) yaw_Current += 360.0f;
+            else if (yaw_Delta > 180.0f) yaw_Current -= 360.0f;
+            
+            yaw_Current = Mathf.SmoothDamp(yaw_Current, yaw_Target, ref yaw_Velocity, lookSmoothing);
+
+            currentState.ApplyLook();      
         }
 
         public void Jump(InputAction.CallbackContext context)

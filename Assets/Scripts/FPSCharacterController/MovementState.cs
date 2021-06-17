@@ -51,7 +51,7 @@ namespace FPSCharacterController
 
         public void CheckIfGrounded()
         {
-            float radius = 0.95f;
+            float radius = 0.45f;
             float verticalOffset = -0.05f;
             verticalOffset += radius * 0.5f;
             Vector3 center = controller.transform.position + (controller.transform.up * verticalOffset);

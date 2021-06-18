@@ -178,7 +178,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7903578257249890864}
         m_TargetAssemblyTypeName: FPSCharacterController.FPSController, Assembly-CSharp
-        m_MethodName: LateralInput
+        m_MethodName: InputMove
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -194,7 +194,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7903578257249890864}
         m_TargetAssemblyTypeName: FPSCharacterController.FPSController, Assembly-CSharp
-        m_MethodName: LookInput
+        m_MethodName: InputLook
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -254,7 +254,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7903578257249890864}
         m_TargetAssemblyTypeName: FPSCharacterController.FPSController, Assembly-CSharp
-        m_MethodName: JumpInput
+        m_MethodName: InputJump
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -270,7 +270,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7903578257249890864}
         m_TargetAssemblyTypeName: FPSCharacterController.FPSController, Assembly-CSharp
-        m_MethodName: CrouchInput
+        m_MethodName: InputCrouch
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -302,7 +302,6 @@ MonoBehaviour:
   settings:
     lateralFriction_Grounded: 5
     lateralFriction_Airborne: 2.5
-    lateralFriction_Current: 0
   playerInput: {fileID: 1552085820994727106}
   playerCamera: {fileID: 5651321606145077037}
   playerRB: {fileID: 0}

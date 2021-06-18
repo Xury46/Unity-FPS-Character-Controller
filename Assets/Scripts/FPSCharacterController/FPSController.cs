@@ -116,13 +116,13 @@ namespace FPSCharacterController
             else Look();
         }
         
-        public void LateralInput(InputAction.CallbackContext context)
+        public void InputMove(InputAction.CallbackContext context)
         {
             Vector2 inputMovement = context.ReadValue<Vector2>();
             lateralMoveVector = new Vector3(inputMovement.x, 0.0f, inputMovement.y) * lateralMoveSpeed * Time.fixedDeltaTime;
         }
 
-        public void LookInput(InputAction.CallbackContext context)
+        public void InputLook(InputAction.CallbackContext context)
         {
             Vector2 inputLook = context.ReadValue<Vector2>();
             float lookThreshold = 0.01f;
@@ -163,12 +163,12 @@ namespace FPSCharacterController
             currentState.ApplyLook();
         }
 
-        public void JumpInput(InputAction.CallbackContext context)
+        public void InputJump(InputAction.CallbackContext context)
         {
             currentState.ApplyJump();
         }
 
-        public void CrouchInput(InputAction.CallbackContext context)
+        public void InputCrouch(InputAction.CallbackContext context)
         {
             if (context.started) currentState.OnCrouch();
             else if (context.canceled) currentState.OnStand();

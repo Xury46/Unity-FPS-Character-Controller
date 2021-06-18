@@ -96,17 +96,19 @@ namespace FPSCharacterController
         void Update()
         {
             InputSystem.Update();
-
-            playerCamera.transform.position = orientation.position + orientation.up * settings.height_Current.cameraHeight; // Make the detatched camera follow the position of the player
             currentState.OnStateUpdate();
-            
-            if (smoothMouseInput) SmoothLook();
-            else Look();
         }
 
         void FixedUpdate()
         {
             currentState.OnStateFixedUpdate();
+        }
+
+        void LateUpdate()
+        {
+            playerCamera.transform.position = orientation.position + orientation.up * settings.height_Current.cameraHeight; // Make the detatched camera follow the position of the player
+            if (smoothMouseInput) SmoothLook();
+            else Look();
         }
         
         public void LateralInput(InputAction.CallbackContext context)

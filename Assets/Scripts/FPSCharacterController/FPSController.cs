@@ -27,7 +27,7 @@ namespace FPSCharacterController
         }
 
         public HeightSettings height_Standing = new HeightSettings(1.75f, 2.0f);
-        public HeightSettings height_Crouching = new HeightSettings(1.25f, 1.5f);
+        public HeightSettings height_Crouching = new HeightSettings(0.75f, 1.00f);
         public HeightSettings height_Current;
     }
 

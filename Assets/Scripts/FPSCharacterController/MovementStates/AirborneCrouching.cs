@@ -8,9 +8,10 @@ namespace FPSCharacterController
     {
         public AirborneCrouching(FPSController controller, FPSControllerSettings settings) : base(controller, settings)
         {
+            lateralFriction = settings.lateralFriction_Airborne;
             height_Target = settings.height_Crouching;
         }
-        
+
         // public override void OnStateEnter(){}
         // public override void OnStateUpdate(){}
         // public override void OnStateExit(){}

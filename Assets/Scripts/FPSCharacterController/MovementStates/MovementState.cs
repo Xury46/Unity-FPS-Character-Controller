@@ -9,12 +9,12 @@ namespace FPSCharacterController
         protected FPSController controller;
         protected FPSControllerSettings settings;
         protected FPSControllerSettings.HeightSettings height_Target;
+        protected float lateralFriction;
 
         public MovementState(FPSController controller, FPSControllerSettings settings)
         {
             this.controller = controller;
             this.settings = settings;
-            height_Target = settings.height_Standing; // Set the default target to standing, other states can override their constructors to use crouching height
         }
 
         public virtual void OnStateEnter(){}
@@ -26,7 +26,10 @@ namespace FPSCharacterController
         public virtual void OnStateFixedUpdate()
         {
             //ApplyLook();
+            //if (controller.lateralMoveVector.magnitude > 0.0f) ApplyLateralMovement();
+            //else ApplyLateralFriction();
             ApplyLateralMovement();
+            ApplyLateralFriction();
             GroundedCheck();
         }
         public virtual void OnStateExit(){}     
@@ -52,6 +55,15 @@ namespace FPSCharacterController
         {
             Vector3 localSpaceLateralVector = controller.orientation.TransformDirection(controller.lateralMoveVector);
             controller.playerRB.AddForce(localSpaceLateralVector, ForceMode.VelocityChange);
+        }
+
+        public virtual void ApplyLateralFriction()
+        {
+            Vector3 localSpaceLateralVelocity = controller.orientation.TransformDirection(controller.playerRB.velocity);
+            localSpaceLateralVelocity = new Vector3(localSpaceLateralVelocity.x , 0.0f, localSpaceLateralVelocity.z);
+            localSpaceLateralVelocity = controller.orientation.InverseTransformDirection(localSpaceLateralVelocity);
+            
+            controller.playerRB.AddForce(-localSpaceLateralVelocity * lateralFriction * Time.fixedDeltaTime, ForceMode.VelocityChange);
         }
 
         public virtual void ApplyJump()

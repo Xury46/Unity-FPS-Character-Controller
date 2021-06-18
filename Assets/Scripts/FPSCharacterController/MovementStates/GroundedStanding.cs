@@ -6,7 +6,11 @@ namespace FPSCharacterController
 {
     public class GroundedStanding : MovementState
     {
-        public GroundedStanding(FPSController controller, FPSControllerSettings settings) : base(controller, settings) {}
+        public GroundedStanding(FPSController controller, FPSControllerSettings settings) : base(controller, settings)
+        {
+            lateralFriction = settings.lateralFriction_Grounded;
+            height_Target = settings.height_Standing;
+        }
 
         // public override void OnStateEnter(){}
         // public override void OnStateUpdate(){}

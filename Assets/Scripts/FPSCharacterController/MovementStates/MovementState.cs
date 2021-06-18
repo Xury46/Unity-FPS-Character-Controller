@@ -31,6 +31,7 @@ namespace FPSCharacterController
             ApplyYaw();
             ApplyLateralMovement();
             ApplyLateralFriction();
+            ApplyGravity();
             GroundedCheck();
         }
 
@@ -75,6 +76,14 @@ namespace FPSCharacterController
         public virtual void ApplyJump()
         {
             controller.playerRB.AddForce(controller.transform.up * controller.jumpForce, ForceMode.VelocityChange);
+        }
+
+        public virtual void ApplyGravity()
+        {
+            float gravityStrength = 20.0f; // 9.81f;
+            Vector3 gravityVector = -controller.transform.up * gravityStrength;
+            
+            controller.playerRB.AddForce(gravityVector, ForceMode.Acceleration);
         }
 
         public void GroundedCheck()

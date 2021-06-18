@@ -12,12 +12,8 @@ namespace FPSCharacterController
         // public override void OnStateUpdate(){}
         // public override void OnStateExit(){}
 
-        public override void OnGroundedCheckFailed() {}
-        
-        public override void Crouch() {}
-        
-        public override void Stand() {}
+        public override void OnGroundedCheckPassed() => controller.ChangeState(controller.groundedStanding);
 
-        public override void ApplyJump() {}
+        public override void ApplyJump() {} // Can't jump while airborne
     }
 }

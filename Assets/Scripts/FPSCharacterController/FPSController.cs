@@ -70,6 +70,7 @@ namespace FPSCharacterController
         public GroundedStanding groundedStanding;
         public GroundedCrouching groundedCrouching;
         public AirborneStanding airborneStanding;
+        public AirborneCrouching airborneCrouching;
 
         private MovementState currentState;
 
@@ -80,6 +81,7 @@ namespace FPSCharacterController
             groundedStanding = new GroundedStanding(this, settings);
             groundedCrouching = new GroundedCrouching(this, settings);
             airborneStanding = new AirborneStanding(this, settings);
+            airborneCrouching = new AirborneCrouching(this, settings);
             currentState = groundedStanding;
 
             settings.height_Current = new FPSControllerSettings.HeightSettings(settings.height_Standing);
@@ -165,8 +167,8 @@ namespace FPSCharacterController
 
         public void CrouchInput(InputAction.CallbackContext context)
         {
-            if (context.started) currentState.Crouch();
-            else if (context.canceled) currentState.Stand();
+            if (context.started) currentState.OnCrouch();
+            else if (context.canceled) currentState.OnStand();
         }
 
         public void ChangeState(MovementState stateToChangeTo)

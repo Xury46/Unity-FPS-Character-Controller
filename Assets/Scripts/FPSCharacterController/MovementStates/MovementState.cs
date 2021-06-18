@@ -27,13 +27,9 @@ namespace FPSCharacterController
         {
             //ApplyLook();
             ApplyLateralMovement();
-            CheckIfGrounded();
+            GroundedCheck();
         }
-        public virtual void OnStateExit(){}
-
-        public virtual void OnGroundedCheckPassed() => controller.ChangeState(controller.groundedStanding);
-        public virtual void OnGroundedCheckFailed() => controller.ChangeState(controller.airborneStanding);
-        
+        public virtual void OnStateExit(){}     
 
         public virtual void ApplyLook()
         {
@@ -52,11 +48,6 @@ namespace FPSCharacterController
             controller.capsuleCollider.center = Vector3.up * settings.height_Current.capsuleHeight * 0.5f;
         }
 
-        //public void ApplyLook()
-        //{
-            //controller.playerRB.MoveRotation(Quaternion.Euler(controller.transform.up * controller.yaw_Current));
-        //}
-
         public void ApplyLateralMovement()
         {
             Vector3 localSpaceLateralVector = controller.orientation.TransformDirection(controller.lateralMoveVector);
@@ -68,17 +59,7 @@ namespace FPSCharacterController
             controller.playerRB.AddForce(controller.orientation.up * controller.jumpForce, ForceMode.VelocityChange);
         }
 
-        public virtual void Crouch()
-        {
-            controller.ChangeState(controller.groundedCrouching);
-        }
-        
-        public virtual void Stand()
-        {
-            controller.ChangeState(controller.groundedStanding);
-        }
-
-        public void CheckIfGrounded()
+        public void GroundedCheck()
         {
             float radius = 0.45f;
             float verticalOffset = -0.05f;
@@ -87,5 +68,13 @@ namespace FPSCharacterController
             if (Physics.CheckSphere(center, radius, controller.groundedCheckLayers, QueryTriggerInteraction.Ignore)) OnGroundedCheckPassed();
             else OnGroundedCheckFailed();
         }
+
+        public virtual void OnGroundedCheckPassed() {}
+
+        public virtual void OnGroundedCheckFailed() {}
+
+        public virtual void OnCrouch() {}
+        
+        public virtual void OnStand() {}
     }
 }

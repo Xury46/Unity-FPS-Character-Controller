@@ -314,9 +314,9 @@ MonoBehaviour:
   pitch_Target: 0
   yaw_Current: 0
   yaw_Target: 0
-  lookSensitivity: 0.025
+  lookSensitivity: 0.05
   smoothMouseInput: 1
-  lookSmoothing: 0.025
+  lookSmoothing: 0.01
   lateralMoveVector: {x: 0, y: 0, z: 0}
   lateralMoveSpeed: 25
   jumpForce: 3

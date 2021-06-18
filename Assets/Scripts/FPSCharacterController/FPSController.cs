@@ -55,9 +55,9 @@ namespace FPSCharacterController
         private float yaw_Velocity; // continuously modified by the smooth damp
         public float yaw_Target;
         
-        public float lookSensitivity = 0.25f;
+        public float lookSensitivity = 0.05f;
         public bool smoothMouseInput = true;
-        public float lookSmoothing = 0.5f;
+        public float lookSmoothing = 0.01f;
 
         // Movement
         public Vector3 lateralMoveVector;

@@ -95,7 +95,7 @@ namespace FPSCharacterController
 
         void Update()
         {
-            InputSystem.Update();
+            //InputSystem.Update();
             currentState.OnStateUpdate();
         }
 
@@ -122,13 +122,15 @@ namespace FPSCharacterController
             Vector2 inputLook = context.ReadValue<Vector2>();
             float lookThreshold = 0.01f;
             if (inputLook.sqrMagnitude < lookThreshold) return;
+            //inputLook *= lookSensitivity * Time.deltaTime;
+            inputLook *= lookSensitivity;
 
-            int invert = pitch_Invert ? 1 : -1;
-            pitch_Target += inputLook.y * lookSensitivity * Time.deltaTime * invert;
+            float invert = pitch_Invert ? 1.0f : -1.0f;
+            pitch_Target += inputLook.y * invert;
             pitch_Target = Mathf.Clamp(pitch_Target, pitch_Min, pitch_Max);
 
             // Keep yaw clamped within -180 and 180 degrees
-            yaw_Target += inputLook.x * lookSensitivity * Time.deltaTime;
+            yaw_Target += inputLook.x;
             if (yaw_Target <= -180.0f) yaw_Target += 360.0f;
             else if (yaw_Target > 180.0f) yaw_Target -= 360.0f;
         }

@@ -120,16 +120,15 @@ namespace FPSCharacterController
         public void LookInput(InputAction.CallbackContext context)
         {
             Vector2 inputLook = context.ReadValue<Vector2>();
-            Debug.Log(inputLook);
+            float lookThreshold = 0.01f;
+            if (inputLook.sqrMagnitude < lookThreshold) return;
 
             int invert = pitch_Invert ? 1 : -1;
-            //pitch_Target += inputLook.y * lookSensitivity * Time.deltaTime * invert;
-            pitch_Target += inputLook.y * lookSensitivity * invert;
+            pitch_Target += inputLook.y * lookSensitivity * Time.deltaTime * invert;
             pitch_Target = Mathf.Clamp(pitch_Target, pitch_Min, pitch_Max);
 
             // Keep yaw clamped within -180 and 180 degrees
-            //yaw_Target += inputLook.x * lookSensitivity * Time.deltaTime;
-            yaw_Target += inputLook.x * lookSensitivity;
+            yaw_Target += inputLook.x * lookSensitivity * Time.deltaTime;
             if (yaw_Target <= -180.0f) yaw_Target += 360.0f;
             else if (yaw_Target > 180.0f) yaw_Target -= 360.0f;
         }

@@ -40,7 +40,6 @@ namespace FPSCharacterController
         [SerializeField] private PlayerInput playerInput;
         public Camera playerCamera;
         [HideInInspector] public Rigidbody playerRB;
-        public Transform orientation;
         public CapsuleCollider capsuleCollider;
 
         public LayerMask groundedCheckLayers;        
@@ -111,7 +110,7 @@ namespace FPSCharacterController
 
         void LateUpdate()
         {
-            playerCamera.transform.position = orientation.position + orientation.up * settings.height_Current.cameraHeight; // Make the detatched camera follow the position of the player
+            playerCamera.transform.position = transform.position + transform.up * settings.height_Current.cameraHeight; // Make the detatched camera follow the position of the player
             if (smoothMouseInput) SmoothLook();
             else Look();
         }
@@ -151,7 +150,7 @@ namespace FPSCharacterController
             
             yaw_Current = Mathf.SmoothDamp(yaw_Current, yaw_Target, ref yaw_Velocity, lookSmoothing);
 
-            currentState.ApplyLook();      
+            currentState.ApplyCameraLook();      
         }
 
         private void Look()
@@ -160,7 +159,7 @@ namespace FPSCharacterController
             
             yaw_Current = yaw_Target;
             
-            currentState.ApplyLook();
+            currentState.ApplyCameraLook();
         }
 
         public void InputJump(InputAction.CallbackContext context)

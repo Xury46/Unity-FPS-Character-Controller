@@ -42,7 +42,7 @@ namespace FPSCharacterController
         [HideInInspector] public Rigidbody playerRB;
         public CapsuleCollider capsuleCollider;
 
-        public LayerMask groundedCheckLayers;        
+        public LayerMask groundedCheckLayers;
 
         // Camera Pitch
         public float pitch_Current = 0.0f;
@@ -56,7 +56,7 @@ namespace FPSCharacterController
         public float yaw_Current = 0.0f;
         private float yaw_Velocity; // continuously modified by the smooth damp
         public float yaw_Target;
-        
+
         public float lookSensitivity = 0.05f;
         public bool smoothMouseInput = true;
         public float lookSmoothing = 0.01f;
@@ -66,7 +66,6 @@ namespace FPSCharacterController
         public float lateralMoveSpeed = 50.0f;
 
         public float jumpForce = 3.0f;
-        
 
         //State machine states
         public GroundedStanding groundedStanding;
@@ -99,7 +98,6 @@ namespace FPSCharacterController
 
         void Update()
         {
-            //InputSystem.Update();
             currentState.OnStateUpdate();
         }
 
@@ -141,7 +139,7 @@ namespace FPSCharacterController
 
         private void SmoothLook()
         {   
-            pitch_Current = Mathf.SmoothDamp(pitch_Current, pitch_Target, ref pitch_Velocity, lookSmoothing);            
+            pitch_Current = Mathf.SmoothDamp(pitch_Current, pitch_Target, ref pitch_Velocity, lookSmoothing);
 
             // Handle yaw smooth damping as it crosses over 360 degrees
             float yaw_Delta = yaw_Current - yaw_Target;
@@ -150,7 +148,7 @@ namespace FPSCharacterController
             
             yaw_Current = Mathf.SmoothDamp(yaw_Current, yaw_Target, ref yaw_Velocity, lookSmoothing);
 
-            currentState.ApplyCameraLook();      
+            currentState.ApplyCameraLook();
         }
 
         private void Look()

@@ -18,6 +18,7 @@ namespace FPSCharacterController
         }
 
         public virtual void OnStateEnter(){}
+
         public virtual void OnStateUpdate()
         {
             if (settings.height_Current.cameraHeight != height_Target.cameraHeight) BlendHeight();
@@ -25,7 +26,6 @@ namespace FPSCharacterController
 
         public virtual void OnStateFixedUpdate()
         {
-            //ApplyLook();
             //if (controller.lateralMoveVector.magnitude > 0.0f) ApplyLateralMovement();
             //else ApplyLateralFriction();
             ApplyYaw();
@@ -33,7 +33,8 @@ namespace FPSCharacterController
             ApplyLateralFriction();
             GroundedCheck();
         }
-        public virtual void OnStateExit(){}     
+
+        public virtual void OnStateExit(){}
 
         public virtual void ApplyCameraLook()
         {

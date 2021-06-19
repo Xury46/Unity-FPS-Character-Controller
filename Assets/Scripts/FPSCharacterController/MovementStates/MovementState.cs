@@ -33,10 +33,10 @@ namespace FPSCharacterController
             ApplyYaw();
             CalculateLocalVelocityVectors();
             
-            ApplyLateralFriction();
+            //ApplyLateralFriction();
             ApplyLateralMovement();
             
-            ApplyGravity();
+            //ApplyGravity();
             GroundedCheck();
         }
 
@@ -89,37 +89,22 @@ namespace FPSCharacterController
             //verticalVelocity = controller.transform.TransformDirection(verticalVelocity); // Convert the vertical velocity vector back to world space
         }
 
+        Vector3 predictedVelocity;
+
         public void ApplyLateralMovement()
         {
-            controller.playerRB.AddForce(-controller.movementForceCached, ForceMode.VelocityChange); // Apply opposite force to cancel previous movement in world space
+            if (predictedVelocity == controller.transform.TransformDirection(controller.lateralVelocity)) Debug.Log("It's a match!");
+            else Debug.Log("It's not a match, delta is: " + (predictedVelocity - controller.playerRB.velocity));
+
+            // TODO limit this based on the delta
+            controller.playerRB.AddForce(-controller.movementForceCached, ForceMode.VelocityChange); // Apply opposite force to cancel previous movement.
+
+            Vector3 movementForceToAdd = controller.transform.TransformDirection(settings.lateralMoveVector * settings.moveSpeed_Current); // Transform from local to world space;
             
-            Vector3 movementForceToAdd = controller.transform.TransformDirection(settings.lateralMoveVector * settings.moveSpeed_Current); // Transform from local to world space
+            predictedVelocity = controller.transform.TransformDirection(controller.lateralVelocity) -controller.movementForceCached + movementForceToAdd; // Attempt to calculate what the velocity will be after adding the movement force.
             
-            controller.playerRB.AddForce(movementForceToAdd, ForceMode.VelocityChange); // Add new movement force in world space
-            
+            controller.playerRB.AddForce(movementForceToAdd, ForceMode.VelocityChange); // Apply opposite force to cancel previous movement, and add new movement force in world space
             controller.movementForceCached = movementForceToAdd; // Cache movement force so it can be used to cancel the movement next frame.
-
-            
-            
-            // Shortent the movementCanceling vector if it would make the magnitude longer than before
-            // if ((controller.lateralVelocity - cachedMovementForce).magnitude >
-
-            /*
-            float accelerationSpeed = 100.0f;
-
-            Vector3 potentialVelocity = controller.lateralVelocity + settings.lateralMoveVector;
-
-            // TODO complete this logic to redirect or shorten the vector
-            if (potentialVelocity.magnitude <= settings.moveSpeed_Current)
-            {
-                controller.playerRB.AddRelativeForce(settings.lateralMoveVector * accelerationSpeed * Time.fixedDeltaTime, ForceMode.VelocityChange);
-            }
-            else
-            {
-                // Change direction
-                controller.playerRB.velocity = controller.lateralVelocity.magnitude * controller.transform.TransformDirection(settings.lateralMoveVector.normalized);
-            }
-            */
         }
 
         public virtual void ApplyLateralFriction()

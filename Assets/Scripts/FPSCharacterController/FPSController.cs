@@ -136,8 +136,9 @@ namespace FPSCharacterController
         public void InputMove(InputAction.CallbackContext context)
         {
             Vector2 inputMovement = context.ReadValue<Vector2>();
-            inputMovement = Vector2.ClampMagnitude(inputMovement, 1.0f);
-            settings.lateralMoveVector = new Vector3(inputMovement.x, 0.0f, inputMovement.y) * settings.moveSpeed_Current * Time.fixedDeltaTime;
+            settings.lateralMoveVector = new Vector3(inputMovement.x, 0.0f, inputMovement.y);
+            settings.lateralMoveVector = Vector3.ClampMagnitude(settings.lateralMoveVector, 1.0f);
+            //settings.lateralMoveVector *= Time.fixedDeltaTime;
         }
 
         public void InputLook(InputAction.CallbackContext context)

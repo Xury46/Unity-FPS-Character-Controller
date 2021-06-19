@@ -30,12 +30,12 @@ namespace FPSCharacterController
 
         public virtual void OnStateFixedUpdate()
         {
-            //if (controller.lateralMoveVector.magnitude > 0.0f) ApplyLateralMovement();
-            //else ApplyLateralFriction();
             ApplyYaw();
             CalculateLocalVelocityVectors();
-            ApplyLateralMovement();
-            ApplyLateralFriction();
+            
+            if (settings.lateralMoveVector.magnitude > 0.0f) ApplyLateralMovement();
+            else ApplyLateralFriction();
+            
             ApplyGravity();
             GroundedCheck();
         }
@@ -91,7 +91,20 @@ namespace FPSCharacterController
 
         public void ApplyLateralMovement()
         {
-            controller.playerRB.AddRelativeForce(settings.lateralMoveVector * settings.moveSpeed_Current * Time.fixedDeltaTime, ForceMode.VelocityChange);
+            float accelerationSpeed = 100.0f;
+
+            Vector3 potentialVelocity = controller.lateralVelocity + settings.lateralMoveVector;
+
+            // TODO complete this logic to redirect or shorten the vector
+            if (potentialVelocity.magnitude <= settings.moveSpeed_Current)
+            {
+                controller.playerRB.AddRelativeForce(settings.lateralMoveVector * accelerationSpeed * Time.fixedDeltaTime, ForceMode.VelocityChange);
+            }
+            else
+            {
+                // Change direction
+                controller.playerRB.velocity = controller.lateralVelocity.magnitude * controller.transform.TransformDirection(settings.lateralMoveVector.normalized);
+            }
         }
 
         public virtual void ApplyLateralFriction()

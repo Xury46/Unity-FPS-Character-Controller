@@ -287,18 +287,23 @@ MonoBehaviour:
   settings:
     stateTransition_Duration: 1.5
     stateTransition_Progress: 0
-    lateralFriction_Grounded: 5
+    lateralFriction_Grounded: 8.5
     lateralFriction_Airborne: 2.5
+    lateralFriction_Current: 0
     lateralMoveVector: {x: 0, y: 0, z: 0}
-    moveSpeed_Walking: 50
-    moveSpeed_Running: 125
-    moveSpeed_Crouching: 25
+    gravityDirection: {x: 0, y: -1, z: 0}
+    gravityStrength: 20
+    moveSpeed_Walking: 20
+    moveSpeed_Running: 30
+    moveSpeed_Crouching: 10
     moveSpeed_Current: 0
     jumpForce: 4
   playerInput: {fileID: 1552085820994727106}
   playerCamera: {fileID: 5651321606145077037}
   playerRB: {fileID: 0}
   capsuleCollider: {fileID: 1547543459}
+  lateralVelocity: {x: 0, y: 0, z: 0}
+  verticalVelocity: {x: 0, y: 0, z: 0}
   groundedCheckLayers:
     serializedVersion: 2
     m_Bits: 1

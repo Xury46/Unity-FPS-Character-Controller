@@ -63,6 +63,8 @@ namespace FPSCharacterController
         [HideInInspector] public Vector3 lateralVelocity;
         [HideInInspector] public Vector3 verticalVelocity;
 
+        [HideInInspector] public Vector3 movementForceCached; // World space
+
         public LayerMask groundedCheckLayers;
 
         // Camera Pitch

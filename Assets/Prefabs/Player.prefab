@@ -293,9 +293,9 @@ MonoBehaviour:
     lateralMoveVector: {x: 0, y: 0, z: 0}
     gravityDirection: {x: 0, y: -1, z: 0}
     gravityStrength: 20
-    moveSpeed_Walking: 20
-    moveSpeed_Running: 30
-    moveSpeed_Crouching: 10
+    moveSpeed_Walking: 35
+    moveSpeed_Running: 50
+    moveSpeed_Crouching: 15
     moveSpeed_Current: 0
     jumpForce: 4
   playerInput: {fileID: 1552085820994727106}
@@ -304,6 +304,7 @@ MonoBehaviour:
   capsuleCollider: {fileID: 1547543459}
   lateralVelocity: {x: 0, y: 0, z: 0}
   verticalVelocity: {x: 0, y: 0, z: 0}
+  movementForceCached: {x: 0, y: 0, z: 0}
   groundedCheckLayers:
     serializedVersion: 2
     m_Bits: 1

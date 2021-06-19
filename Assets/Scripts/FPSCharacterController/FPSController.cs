@@ -26,12 +26,24 @@ namespace FPSCharacterController
             public float capsuleHeight;
         }
 
+        public float stateTransition_Duration = 15.0f;
+        public float stateTransition_Progress = 0.0f; // Progress from 0-1
+
         public HeightSettings height_Standing = new HeightSettings(1.75f, 2.0f);
         public HeightSettings height_Crouching = new HeightSettings(0.75f, 1.00f);
         public HeightSettings height_Current;
 
         public float lateralFriction_Grounded = 5.0f;
         public float lateralFriction_Airborne = 2.5f;
+
+        public Vector3 lateralMoveVector;
+        
+        public float moveSpeed_Walking = 50.0f;
+        public float moveSpeed_Running = 75.0f;
+        public float moveSpeed_Crouching = 25.0f;
+        public float moveSpeed_Current;
+
+        public float jumpForce = 4.0f;
     }
 
     public class FPSController : MonoBehaviour
@@ -60,12 +72,6 @@ namespace FPSCharacterController
         public float lookSensitivity = 0.05f;
         public bool smoothMouseInput = true;
         public float lookSmoothing = 0.01f;
-
-        // Movement
-        public Vector3 lateralMoveVector;
-        public float lateralMoveSpeed = 50.0f;
-
-        public float jumpForce = 3.0f;
 
         //State machine states
         public GroundedStanding groundedStanding;
@@ -116,7 +122,8 @@ namespace FPSCharacterController
         public void InputMove(InputAction.CallbackContext context)
         {
             Vector2 inputMovement = context.ReadValue<Vector2>();
-            lateralMoveVector = new Vector3(inputMovement.x, 0.0f, inputMovement.y) * lateralMoveSpeed * Time.fixedDeltaTime;
+            inputMovement = Vector2.ClampMagnitude(inputMovement, 1.0f);
+            settings.lateralMoveVector = new Vector3(inputMovement.x, 0.0f, inputMovement.y) * settings.moveSpeed_Current * Time.fixedDeltaTime;
         }
 
         public void InputLook(InputAction.CallbackContext context)

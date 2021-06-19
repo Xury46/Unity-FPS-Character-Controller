@@ -10,6 +10,7 @@ namespace FPSCharacterController
         {
             lateralFriction = settings.lateralFriction_Grounded;
             height_Target = settings.height_Standing;
+            moveSpeed_Target = settings.moveSpeed_Walking;
         }
 
         // public override void OnStateEnter(){}

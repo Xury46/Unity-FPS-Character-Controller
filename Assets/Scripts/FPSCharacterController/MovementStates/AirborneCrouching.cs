@@ -10,6 +10,7 @@ namespace FPSCharacterController
         {
             lateralFriction = settings.lateralFriction_Airborne;
             height_Target = settings.height_Crouching;
+            moveSpeed_Target = settings.moveSpeed_Crouching;
         }
 
         // public override void OnStateEnter(){}

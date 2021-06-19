@@ -9,6 +9,7 @@ namespace FPSCharacterController
         protected FPSController controller;
         protected FPSControllerSettings settings;
         protected FPSControllerSettings.HeightSettings height_Target;
+        protected float moveSpeed_Target;
         protected float lateralFriction;
 
         public MovementState(FPSController controller, FPSControllerSettings settings)
@@ -17,11 +18,14 @@ namespace FPSCharacterController
             this.settings = settings;
         }
 
-        public virtual void OnStateEnter(){}
+        public virtual void OnStateEnter()
+        {
+            settings.stateTransition_Progress = 0.0f; // Reset the state transition progress
+        }
 
         public virtual void OnStateUpdate()
         {
-            if (settings.height_Current.cameraHeight != height_Target.cameraHeight) BlendHeight();
+            if (settings.stateTransition_Progress < 1.0f) StateTransition();
         }
 
         public virtual void OnStateFixedUpdate()
@@ -47,21 +51,27 @@ namespace FPSCharacterController
             controller.playerRB.MoveRotation(Quaternion.Euler(Vector3.up * controller.yaw_Current));
         }
 
-        protected void BlendHeight()
+        private void StateTransition()
         {
-            float blendSpeed = 15.0f * Time.deltaTime;
-
-            settings.height_Current.cameraHeight = Mathf.Lerp(settings.height_Current.cameraHeight, height_Target.cameraHeight, blendSpeed);
-            settings.height_Current.capsuleHeight = Mathf.Lerp(settings.height_Current.capsuleHeight, height_Target.capsuleHeight, blendSpeed);
+            // Progress through the transition with a 0-1 lerp value
+            if (settings.stateTransition_Duration <= 0.0f) settings.stateTransition_Progress = 1.0f; // Avoid deviding by zero and skip to the end of the transition.
+            settings.stateTransition_Progress = Mathf.Clamp(settings.stateTransition_Progress + (Time.deltaTime / settings.stateTransition_Duration), 0.0f, 1.0f);
+            
+            // Blend camera height, capsule height and center offset
+            settings.height_Current.cameraHeight = Mathf.Lerp(settings.height_Current.cameraHeight, height_Target.cameraHeight, settings.stateTransition_Progress);
+            settings.height_Current.capsuleHeight = Mathf.Lerp(settings.height_Current.capsuleHeight, height_Target.capsuleHeight, settings.stateTransition_Progress);
 
             controller.capsuleCollider.height = settings.height_Current.capsuleHeight;
             controller.capsuleCollider.center = Vector3.up * settings.height_Current.capsuleHeight * 0.5f;
+
+            // Blend MoveSpeed
+            settings.moveSpeed_Current = Mathf.Lerp(settings.moveSpeed_Current, moveSpeed_Target, settings.stateTransition_Progress);
         }
 
         public void ApplyLateralMovement()
         {
-            Vector3 localSpaceLateralVector = controller.transform.TransformDirection(controller.lateralMoveVector);
-            controller.playerRB.AddForce(localSpaceLateralVector, ForceMode.VelocityChange);
+            Vector3 localSpaceLateralVector = controller.transform.TransformDirection(settings.lateralMoveVector);
+            controller.playerRB.AddForce(localSpaceLateralVector * settings.moveSpeed_Current * Time.fixedDeltaTime, ForceMode.VelocityChange);
         }
 
         public virtual void ApplyLateralFriction()
@@ -75,7 +85,7 @@ namespace FPSCharacterController
 
         public virtual void ApplyJump()
         {
-            controller.playerRB.AddForce(controller.transform.up * controller.jumpForce, ForceMode.VelocityChange);
+            controller.playerRB.AddForce(controller.transform.up * settings.jumpForce, ForceMode.VelocityChange);
         }
 
         public virtual void ApplyGravity()

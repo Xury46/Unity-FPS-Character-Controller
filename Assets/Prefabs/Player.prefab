@@ -269,8 +269,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
+    stateTransition_Duration: 15
+    stateTransition_Progress: 0
     lateralFriction_Grounded: 5
     lateralFriction_Airborne: 2.5
+    lateralMoveVector: {x: 0, y: 0, z: 0}
+    moveSpeed_Walking: 50
+    moveSpeed_Running: 75
+    moveSpeed_Crouching: 25
+    moveSpeed_Current: 0
+    jumpForce: 4
   playerInput: {fileID: 1552085820994727106}
   playerCamera: {fileID: 5651321606145077037}
   playerRB: {fileID: 0}
@@ -288,9 +296,6 @@ MonoBehaviour:
   lookSensitivity: 0.05
   smoothMouseInput: 1
   lookSmoothing: 0.01
-  lateralMoveVector: {x: 0, y: 0, z: 0}
-  lateralMoveSpeed: 50
-  jumpForce: 3
 --- !u!54 &1610588819573398084
 Rigidbody:
   m_ObjectHideFlags: 0

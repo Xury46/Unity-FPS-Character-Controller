@@ -43,12 +43,17 @@ namespace FPSCharacterController
 
         public virtual void ApplyCameraLook()
         {
-            controller.playerCamera.transform.localRotation = Quaternion.Euler(new Vector3(controller.pitch_Current, controller.yaw_Current, 0.0f));
+            Vector3 rotationVector = new Vector3(controller.pitch_Current, controller.yaw_Current, 0.0f);
+            controller.playerCamera.transform.localRotation = Quaternion.Euler(rotationVector);
         }
 
         public virtual void ApplyYaw()
         {
-            controller.playerRB.MoveRotation(Quaternion.Euler(Vector3.up * controller.yaw_Current));
+            float yaw_Delta = controller.yaw_Current - controller.yaw_Previous;
+
+            if (yaw_Delta != 0.0f) controller.playerRB.MoveRotation(controller.playerRB.rotation * Quaternion.Euler(Vector3.up * yaw_Delta));
+            
+            controller.yaw_Previous = controller.yaw_Current; // Cache previous yaw
         }
 
         private void StateTransition()

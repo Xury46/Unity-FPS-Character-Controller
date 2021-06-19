@@ -290,9 +290,8 @@ MonoBehaviour:
   pitch_Max: 90
   pitch_Min: -90
   pitch_Invert: 0
-  pitch_Target: 0
+  yaw_Previous: 0
   yaw_Current: 0
-  yaw_Target: 0
   lookSensitivity: 0.05
   smoothMouseInput: 1
   lookSmoothing: 0.01

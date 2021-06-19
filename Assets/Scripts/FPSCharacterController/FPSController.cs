@@ -57,17 +57,18 @@ namespace FPSCharacterController
         public LayerMask groundedCheckLayers;
 
         // Camera Pitch
-        public float pitch_Current = 0.0f;
+        [HideInInspector] public float pitch_Current = 0.0f;
         public float pitch_Max = 90.0f;
         public float pitch_Min = -90.0f;
         public bool pitch_Invert = false;
         private float pitch_Velocity; // continuously modified by the smooth damp
-        public float pitch_Target;
+        private float pitch_Target;
         
         // Camera Yaw
-        public float yaw_Current = 0.0f;
+        [HideInInspector] public float yaw_Previous = 0.0f;
+        [HideInInspector] public float yaw_Current = 0.0f;
         private float yaw_Velocity; // continuously modified by the smooth damp
-        public float yaw_Target;
+        private float yaw_Target;
 
         public float lookSensitivity = 0.05f;
         public bool smoothMouseInput = true;

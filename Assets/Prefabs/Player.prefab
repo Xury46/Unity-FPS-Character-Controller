@@ -269,7 +269,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
-    stateTransition_Duration: 15
+    stateTransition_Duration: 1.5
     stateTransition_Progress: 0
     lateralFriction_Grounded: 5
     lateralFriction_Airborne: 2.5

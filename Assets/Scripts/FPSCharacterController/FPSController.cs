@@ -26,22 +26,23 @@ namespace FPSCharacterController
             public float capsuleHeight;
         }
 
-        public float stateTransition_Duration = 15.0f;
-        public float stateTransition_Progress = 0.0f; // Progress from 0-1
+        [Tooltip("Duration (in seconds) of the transiton between states. Used to blend capsule height, camera height, and move speed.")]
+        public float stateTransition_Duration = 1.5f;
+        [HideInInspector] public float stateTransition_Progress = 0.0f; // Progress from 0-1
 
         public HeightSettings height_Standing = new HeightSettings(1.75f, 2.0f);
         public HeightSettings height_Crouching = new HeightSettings(0.75f, 1.00f);
-        public HeightSettings height_Current;
+        [HideInInspector] public HeightSettings height_Current;
 
         public float lateralFriction_Grounded = 5.0f;
         public float lateralFriction_Airborne = 2.5f;
 
-        public Vector3 lateralMoveVector;
+        [HideInInspector] public Vector3 lateralMoveVector;
         
         public float moveSpeed_Walking = 50.0f;
         public float moveSpeed_Running = 75.0f;
         public float moveSpeed_Crouching = 25.0f;
-        public float moveSpeed_Current;
+        [HideInInspector] public float moveSpeed_Current;
 
         public float jumpForce = 4.0f;
     }

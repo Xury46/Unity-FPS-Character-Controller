@@ -8,7 +8,7 @@ namespace FPSCharacterController
     {
         public AirborneStanding(FPSController controller, FPSControllerSettings settings) : base(controller, settings)
         {
-            lateralFriction = settings.lateralFriction_Airborne;
+            lateralFriction_Target = settings.lateralFriction_Airborne;
             height_Target = settings.height_Standing;
             moveSpeed_Target = settings.moveSpeed_Walking;
         }

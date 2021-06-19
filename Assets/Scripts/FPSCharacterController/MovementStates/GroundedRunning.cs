@@ -8,7 +8,7 @@ namespace FPSCharacterController
     {
         public GroundedRunning(FPSController controller, FPSControllerSettings settings) : base(controller, settings)
         {
-            lateralFriction = settings.lateralFriction_Grounded;
+            lateralFriction_Target = settings.lateralFriction_Grounded;
             height_Target = settings.height_Standing;
             moveSpeed_Target = settings.moveSpeed_Running;
         }

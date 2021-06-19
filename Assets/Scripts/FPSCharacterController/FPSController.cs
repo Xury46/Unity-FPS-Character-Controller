@@ -36,6 +36,7 @@ namespace FPSCharacterController
 
         public float lateralFriction_Grounded = 5.0f;
         public float lateralFriction_Airborne = 2.5f;
+        public float lateralFriction_Current;
 
         [HideInInspector] public Vector3 lateralMoveVector;
         
@@ -54,6 +55,9 @@ namespace FPSCharacterController
         public Camera playerCamera;
         [HideInInspector] public Rigidbody playerRB;
         public CapsuleCollider capsuleCollider;
+
+        [HideInInspector] public Vector3 lateralVelocity;
+        [HideInInspector] public Vector3 verticalVelocity;
 
         public LayerMask groundedCheckLayers;
 

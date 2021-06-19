@@ -10,7 +10,7 @@ namespace FPSCharacterController
         protected FPSControllerSettings settings;
         protected FPSControllerSettings.HeightSettings height_Target;
         protected float moveSpeed_Target;
-        protected float lateralFriction;
+        protected float lateralFriction_Target;
 
         public MovementState(FPSController controller, FPSControllerSettings settings)
         {
@@ -33,6 +33,7 @@ namespace FPSCharacterController
             //if (controller.lateralMoveVector.magnitude > 0.0f) ApplyLateralMovement();
             //else ApplyLateralFriction();
             ApplyYaw();
+            CalculateLocalVelocityVectors();
             ApplyLateralMovement();
             ApplyLateralFriction();
             ApplyGravity();
@@ -71,21 +72,31 @@ namespace FPSCharacterController
 
             // Blend MoveSpeed
             settings.moveSpeed_Current = Mathf.Lerp(settings.moveSpeed_Current, moveSpeed_Target, settings.stateTransition_Progress);
+            
+            // Blend LateralFriction
+            settings.lateralFriction_Current = Mathf.Lerp(settings.lateralFriction_Current, lateralFriction_Target, settings.stateTransition_Progress);
+        }
+
+        protected void CalculateLocalVelocityVectors()
+	    {
+            // Calculate how fast the player is moving along its local lateral axes.
+		    Vector3 localVelocity = controller.transform.InverseTransformDirection(controller.playerRB.velocity); // Convert the vector to local space
+
+            controller.lateralVelocity = new Vector3(localVelocity.x, 0.0f, localVelocity.z); // Remove the y component of the local velocity vector;
+            controller.verticalVelocity = Vector3.up * localVelocity.y; // Remove the x, and z components of the local velocity vector;
+
+            //lateralVelocity = controller.transform.TransformDirection(lateralVelocity); // Convert the lateral velocity vector back to world space
+            //verticalVelocity = controller.transform.TransformDirection(verticalVelocity); // Convert the vertical velocity vector back to world space
         }
 
         public void ApplyLateralMovement()
         {
-            Vector3 localSpaceLateralVector = controller.transform.TransformDirection(settings.lateralMoveVector);
-            controller.playerRB.AddForce(localSpaceLateralVector * settings.moveSpeed_Current * Time.fixedDeltaTime, ForceMode.VelocityChange);
+            controller.playerRB.AddRelativeForce(settings.lateralMoveVector * settings.moveSpeed_Current * Time.fixedDeltaTime, ForceMode.VelocityChange);
         }
 
         public virtual void ApplyLateralFriction()
-        {
-            Vector3 localSpaceLateralVelocity = controller.transform.TransformDirection(controller.playerRB.velocity);
-            localSpaceLateralVelocity = new Vector3(localSpaceLateralVelocity.x , 0.0f, localSpaceLateralVelocity.z);
-            localSpaceLateralVelocity = controller.transform.InverseTransformDirection(localSpaceLateralVelocity);
-            
-            controller.playerRB.AddForce(-localSpaceLateralVelocity * lateralFriction * Time.fixedDeltaTime, ForceMode.VelocityChange);
+        {            
+            controller.playerRB.AddRelativeForce(-controller.lateralVelocity * settings.lateralFriction_Current * Time.fixedDeltaTime, ForceMode.VelocityChange);
         }
 
         public virtual void ApplyJump()

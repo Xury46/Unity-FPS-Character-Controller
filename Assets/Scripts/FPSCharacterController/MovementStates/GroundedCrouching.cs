@@ -8,7 +8,7 @@ namespace FPSCharacterController
     {
         public GroundedCrouching(FPSController controller, FPSControllerSettings settings) : base(controller, settings)
         {
-            lateralFriction = settings.lateralFriction_Grounded;
+            lateralFriction_Target = settings.lateralFriction_Grounded;
             height_Target = settings.height_Crouching;
             moveSpeed_Target = settings.moveSpeed_Crouching;
         }

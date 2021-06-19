@@ -60,10 +60,11 @@ namespace FPSCharacterController
         [HideInInspector] public Rigidbody playerRB;
         public CapsuleCollider capsuleCollider;
 
-        [HideInInspector] public Vector3 lateralVelocity;
-        [HideInInspector] public Vector3 verticalVelocity;
-
-        [HideInInspector] public Vector3 movementForceCached; // World space
+        [HideInInspector] public Vector3 localLateralVelocity;
+        [HideInInspector] public Vector3 localVerticalVelocity;
+        [HideInInspector] public Vector3 lateralForceAddedLastFixedUpdate_World; // World space
+        [HideInInspector] public Vector3 totalPredictedLateralVelocity_World;
+        [HideInInspector] public Vector3 lateralVelocityDelta_World;
 
         public LayerMask groundedCheckLayers;
 

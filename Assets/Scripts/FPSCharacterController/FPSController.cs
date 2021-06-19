@@ -39,6 +39,10 @@ namespace FPSCharacterController
         public float lateralFriction_Current;
 
         [HideInInspector] public Vector3 lateralMoveVector;
+
+        // Gravity
+        [HideInInspector] public Vector3 gravityDirection = Vector3.down;
+        [HideInInspector] public float gravityStrength = 20.0f; // 9.81f;
         
         public float moveSpeed_Walking = 50.0f;
         public float moveSpeed_Running = 75.0f;

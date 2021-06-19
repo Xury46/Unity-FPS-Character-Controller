@@ -106,9 +106,7 @@ namespace FPSCharacterController
 
         public virtual void ApplyGravity()
         {
-            float gravityStrength = 20.0f; // 9.81f;
-            Vector3 gravityVector = -controller.transform.up * gravityStrength;
-            
+            Vector3 gravityVector = settings.gravityDirection * settings.gravityStrength;            
             controller.playerRB.AddForce(gravityVector, ForceMode.Acceleration);
         }
 

@@ -38,6 +38,14 @@
                     "interactions": ""
                 },
                 {
+                    "name": "Run",
+                    "type": "Button",
+                    "id": "df2a0d68-d534-4dbd-bf07-953eedafad26",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
                     "name": "Crouch",
                     "type": "Button",
                     "id": "bdec4428-31c7-499b-9151-1effcfd14703",
@@ -308,6 +316,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Crouch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a439742e-f8c6-4306-a521-5a403263adaf",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Run",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

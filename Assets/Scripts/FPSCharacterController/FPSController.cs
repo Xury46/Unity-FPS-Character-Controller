@@ -77,6 +77,7 @@ namespace FPSCharacterController
 
         //State machine states
         public GroundedStanding groundedStanding;
+        public GroundedRunning groundedRunning;
         public GroundedCrouching groundedCrouching;
         public AirborneStanding airborneStanding;
         public AirborneCrouching airborneCrouching;
@@ -88,6 +89,7 @@ namespace FPSCharacterController
         {
             playerRB = GetComponent<Rigidbody>();
             groundedStanding = new GroundedStanding(this, settings);
+            groundedRunning = new GroundedRunning(this, settings);
             groundedCrouching = new GroundedCrouching(this, settings);
             airborneStanding = new AirborneStanding(this, settings);
             airborneCrouching = new AirborneCrouching(this, settings);
@@ -172,6 +174,12 @@ namespace FPSCharacterController
         public void InputJump(InputAction.CallbackContext context)
         {
             currentState.ApplyJump();
+        }
+
+        public void InputRun(InputAction.CallbackContext context)
+        {
+            if (context.started) currentState.OnRun();
+            else if (context.canceled) currentState.OnWalk();
         }
 
         public void InputCrouch(InputAction.CallbackContext context)

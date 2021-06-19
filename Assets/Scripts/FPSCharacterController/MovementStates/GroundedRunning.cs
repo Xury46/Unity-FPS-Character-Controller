@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace FPSCharacterController
 {
-    public class GroundedStanding : MovementState
+    public class GroundedRunning : MovementState
     {
-        public GroundedStanding(FPSController controller, FPSControllerSettings settings) : base(controller, settings)
+        public GroundedRunning(FPSController controller, FPSControllerSettings settings) : base(controller, settings)
         {
             lateralFriction = settings.lateralFriction_Grounded;
             height_Target = settings.height_Standing;
-            moveSpeed_Target = settings.moveSpeed_Walking;
+            moveSpeed_Target = settings.moveSpeed_Running;
         }
 
         // public override void OnStateEnter(){}
@@ -19,7 +19,7 @@ namespace FPSCharacterController
 
         public override void OnGroundedCheckFailed() => controller.ChangeState(controller.airborneStanding);
 
-        public override void OnRun() => controller.ChangeState(controller.groundedRunning);
+        public override void OnWalk() => controller.ChangeState(controller.groundedStanding);
 
         public override void OnCrouch() => controller.ChangeState(controller.groundedCrouching);
     }

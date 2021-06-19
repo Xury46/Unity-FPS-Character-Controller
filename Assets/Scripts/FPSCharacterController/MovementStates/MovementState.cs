@@ -115,6 +115,10 @@ namespace FPSCharacterController
 
         public virtual void OnGroundedCheckFailed() {}
 
+        public virtual void OnRun() {}
+        
+        public virtual void OnWalk() {}
+        
         public virtual void OnCrouch() {}
         
         public virtual void OnStand() {}

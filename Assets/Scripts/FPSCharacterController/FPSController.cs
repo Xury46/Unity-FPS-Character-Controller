@@ -65,6 +65,7 @@ namespace FPSCharacterController
         [HideInInspector] public Vector3 lateralForceAddedLastFixedUpdate_World; // World space
         [HideInInspector] public Vector3 totalPredictedLateralVelocity_World;
         [HideInInspector] public Vector3 lateralVelocityDelta_World;
+        [HideInInspector] public Vector3 lateralVelocityprojected_World;
 
         public LayerMask groundedCheckLayers;
 

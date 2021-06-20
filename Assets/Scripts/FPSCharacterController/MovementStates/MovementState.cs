@@ -33,8 +33,9 @@ namespace FPSCharacterController
             CalculateLocalVelocityVectors();
             
             ApplyYaw();
-            //ApplyLateralFriction();
+            
             ApplyLateralMovement();
+            ApplyLateralFriction();
             
             ApplyGravity();
             GroundedCheck();
@@ -77,6 +78,9 @@ namespace FPSCharacterController
             settings.lateralFriction_Current = Mathf.Lerp(settings.lateralFriction_Current, lateralFriction_Target, settings.stateTransition_Progress);
         }
 
+        float predictedMag;
+        float projectedMag;
+
         protected void CalculateLocalVelocityVectors()
 	    {
             // Calculate how fast the player is moving along its local lateral axes.
@@ -84,18 +88,48 @@ namespace FPSCharacterController
             controller.localLateralVelocity = new Vector3(localVelocity.x, 0.0f, localVelocity.z); // Remove the y component of the local velocity vector;
             controller.localVerticalVelocity = Vector3.up * localVelocity.y; // Remove the x, and z components of the local velocity vector;
 
+
+            predictedMag = controller.totalPredictedLateralVelocity_World.magnitude;
+            
+            //controller.lateralVelocityprojected_World = Vector3.Project(controller.totalPredictedLateralVelocity_World, controller.transform.TransformDirection(controller.localLateralVelocity));
+            controller.lateralVelocityprojected_World = Vector3.Project(controller.lateralForceAddedLastFixedUpdate_World, controller.transform.TransformDirection(controller.localLateralVelocity));
+
+            projectedMag = controller.lateralVelocityprojected_World.magnitude;
+
             controller.lateralVelocityDelta_World = controller.totalPredictedLateralVelocity_World - controller.transform.TransformDirection(controller.localLateralVelocity); // What is the difference in lateral velocity between the prediction of last FixedUpdate and the result of the last FixedUpdate;
+            
+            
             controller.totalPredictedLateralVelocity_World = controller.transform.TransformDirection(controller.localLateralVelocity); // Reset the total velocity prediction to match the lateral velocity at the start of the FixedUpdate
         }
 
+        Vector3 movementCancelVector_World;
+        
         public void ApplyLateralMovement()
         {
+            /*
             if (controller.lateralVelocityDelta_World == Vector3.zero) Debug.Log("It's a match!");
             else Debug.Log("It's not a match, delta is: " + controller.lateralVelocityDelta_World);
+            */
 
-            Vector3 movementCancelVector_World = controller.lateralForceAddedLastFixedUpdate_World - controller.lateralVelocityDelta_World; // Shortent the cancel vector based on the delta
-            controller.playerRB.AddForce(-movementCancelVector_World, ForceMode.VelocityChange); // Apply opposite force to cancel previous movement.
-            controller.totalPredictedLateralVelocity_World -= movementCancelVector_World;
+            //Vector3 movementCancelVector_World = controller.lateralForceAddedLastFixedUpdate_World - controller.lateralVelocityDelta_World; // Shortent the cancel vector based on the delta
+            //Vector3 movementCancelVector_World = controller.lateralForceAddedLastFixedUpdate_World; // Shorten the cancel vector based on the delta
+            
+            
+            //movementCancelVector_World = -controller.totalPredictedLateralVelocity_World;
+            //movementCancelVector_World = -controller.lateralForceAddedLastFixedUpdate_World;
+            Vector3 movementCancelVector_World = -controller.lateralVelocityprojected_World; // THIS WAS ALMOST WORKING
+            
+            
+            // TODO LEAVE BEHIND THE REMAINEDER OF THE MAGNITUDE
+            //Vector3 movementCancelVector_World = controller.totalPredictedLateralVelocity_World.normalized * (predictedMag - projectedMag);
+            //Vector3 movementCancelVector_World = controller.lateralForceAddedLastFixedUpdate_World.normalized * (projectedMag - controller.lateralForceAddedLastFixedUpdate_World.normalized.magnitude);
+
+
+
+
+            //Vector3 movementCancelVector_World = controller.lateralForceAddedLastFixedUpdate_World - controller.lateralVelocityDelta_World; // Shortent the cancel vector based on the delta
+            controller.playerRB.AddForce(movementCancelVector_World, ForceMode.VelocityChange); // Apply opposite force to cancel previous movement.
+            controller.totalPredictedLateralVelocity_World += movementCancelVector_World;
 
             Vector3 movementForceToAdd = controller.transform.TransformDirection(settings.lateralMoveVector * settings.moveSpeed_Current); // Transform from local to world space;
             controller.playerRB.AddForce(movementForceToAdd, ForceMode.VelocityChange); // Apply opposite force to cancel previous movement, and add new movement force in world space
@@ -106,19 +140,13 @@ namespace FPSCharacterController
 
         public virtual void ApplyLateralFriction()
         {   
-            //Vector3 frictionToAdd = controller.transform.TransformDirection(controller.localLateralVelocity); // Transform from local to world space
-            //Vector3 frictionToAdd = controller.transform.InverseTransformDirection(controller.totalLateralForces); // Transform from world to local
-            //frictionToAdd = new Vector3(frictionToAdd.x, 0.0f, frictionToAdd.z); // Zero out the vertical component
-            //frictionToAdd = controller.transform.TransformDirection(frictionToAdd); // Transform from local to world space
-
-            //controller.forcesAddedSinceLastFixedUpdate
-
-            Vector3 frictionToAdd = controller.localLateralVelocity;
-            //frictionToAdd -= controller.movementForceCached; // Remove the cached movement force from the current lateral velocity so that we only take into account the player's velocity from external sources
-
-            frictionToAdd = controller.transform.InverseTransformDirection(frictionToAdd);
-            
-            controller.playerRB.AddForce(-frictionToAdd * settings.lateralFriction_Current * Time.fixedDeltaTime, ForceMode.VelocityChange);
+            /*
+            //Vector3 frictionToAdd = controller.totalPredictedLateralVelocity_World - movementCancelVector_World;
+            Vector3 frictionToAdd = controller.totalPredictedLateralVelocity_World;
+            //frictionToAdd *= settings.lateralFriction_Current * Time.fixedDeltaTime;
+            controller.playerRB.AddForce(-frictionToAdd, ForceMode.VelocityChange);
+            controller.totalPredictedLateralVelocity_World -= frictionToAdd;
+            */
         }
 
         public virtual void ApplyJump()

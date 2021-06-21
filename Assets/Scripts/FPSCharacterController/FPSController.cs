@@ -61,6 +61,8 @@ namespace FPSCharacterController
         [HideInInspector] public Rigidbody playerRB;
         public CapsuleCollider capsuleCollider;
 
+        [HideInInspector] public List<Collision> collisionsAppliedLastFixedUpdate;
+
         [HideInInspector] public Vector3 localLateralVelocity;
         [HideInInspector] public Vector3 localVerticalVelocity;
         [HideInInspector] public Vector3 lateralForceAddedLastFixedUpdate_World; // World space
@@ -108,6 +110,7 @@ namespace FPSCharacterController
             currentState = groundedStanding;
 
             settings.height_Current = new FPSControllerSettings.HeightSettings(settings.height_Standing);
+            collisionsAppliedLastFixedUpdate = new List<Collision>(); // Initialize the list
         }
 
         private void Start()
@@ -126,6 +129,7 @@ namespace FPSCharacterController
         void FixedUpdate()
         {
             currentState.OnStateFixedUpdate();
+            collisionsAppliedLastFixedUpdate = new List<Collision>(); // Clear the list of collisions
         }
 
         void LateUpdate()
@@ -133,6 +137,11 @@ namespace FPSCharacterController
             playerCamera.transform.position = transform.position + transform.up * settings.height_Current.cameraHeight; // Make the detatched camera follow the position of the player
             if (smoothMouseInput) SmoothLook();
             else Look();
+        }
+
+        void OnCollisionEnter(Collision other)
+        {
+            collisionsAppliedLastFixedUpdate.Add(other);
         }
         
         public void InputMove(InputAction.CallbackContext context)

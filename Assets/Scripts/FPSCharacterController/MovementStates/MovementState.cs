@@ -28,8 +28,22 @@ namespace FPSCharacterController
             if (settings.stateTransition_Progress < 1.0f) StateTransition();
         }
 
+        Vector3 lateralCollisionImpulses;
+
         public virtual void OnStateFixedUpdate()
         {
+            lateralCollisionImpulses = Vector3.zero;
+
+            foreach (Collision collision in controller.collisionsAppliedLastFixedUpdate)
+            {
+                Debug.Log(collision.collider.name + ": " + collision.impulse);
+
+                Vector3 localImpulseVector = controller.transform.InverseTransformDirection(collision.impulse);
+                localImpulseVector = new Vector3(localImpulseVector.x, 0.0f, localImpulseVector.z);
+                localImpulseVector = controller.transform.TransformDirection(localImpulseVector);
+                lateralCollisionImpulses += localImpulseVector;
+            }
+
             CalculateLocalVelocityVectors();
             
             ApplyYaw();
@@ -117,7 +131,10 @@ namespace FPSCharacterController
             
             //movementCancelVector_World = -controller.totalPredictedLateralVelocity_World;
             //movementCancelVector_World = -controller.lateralForceAddedLastFixedUpdate_World;
-            Vector3 movementCancelVector_World = -controller.lateralVelocityprojected_World; // THIS WAS ALMOST WORKING
+            //Vector3 movementCancelVector_World = -controller.lateralVelocityprojected_World; // THIS WAS ALMOST WORKING
+            
+            
+            Vector3 movementCancelVector_World = controller.lateralForceAddedLastFixedUpdate_World + lateralCollisionImpulses; // THIS WAS ALMOST WORKING
             
             
             // TODO LEAVE BEHIND THE REMAINEDER OF THE MAGNITUDE
@@ -128,12 +145,12 @@ namespace FPSCharacterController
 
 
             //Vector3 movementCancelVector_World = controller.lateralForceAddedLastFixedUpdate_World - controller.lateralVelocityDelta_World; // Shortent the cancel vector based on the delta
-            controller.playerRB.AddForce(movementCancelVector_World, ForceMode.VelocityChange); // Apply opposite force to cancel previous movement.
-            controller.totalPredictedLateralVelocity_World += movementCancelVector_World;
+            controller.playerRB.AddForce(-movementCancelVector_World, ForceMode.VelocityChange); // Apply opposite force to cancel previous movement.
+            //controller.totalPredictedLateralVelocity_World += movementCancelVector_World;
 
             Vector3 movementForceToAdd = controller.transform.TransformDirection(settings.lateralMoveVector * settings.moveSpeed_Current); // Transform from local to world space;
             controller.playerRB.AddForce(movementForceToAdd, ForceMode.VelocityChange); // Apply opposite force to cancel previous movement, and add new movement force in world space
-            controller.totalPredictedLateralVelocity_World += movementForceToAdd; // Attempt to calculate what the velocity will be after adding the movement force.
+            //controller.totalPredictedLateralVelocity_World += movementForceToAdd; // Attempt to calculate what the velocity will be after adding the movement force.
 
             controller.lateralForceAddedLastFixedUpdate_World = movementForceToAdd; // Cache movement force so it can be used to cancel the movement next frame.
         }

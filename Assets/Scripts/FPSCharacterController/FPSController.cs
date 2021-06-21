@@ -30,8 +30,8 @@ namespace FPSCharacterController
         public float stateTransition_Duration = 1.5f;
         [HideInInspector] public float stateTransition_Progress = 0.0f; // Progress from 0-1
 
-        public HeightSettings height_Standing = new HeightSettings(1.75f, 2.0f);
         public HeightSettings height_Crouching = new HeightSettings(0.75f, 1.00f);
+        public HeightSettings height_Standing = new HeightSettings(1.75f, 2.0f);
         [HideInInspector] public HeightSettings height_Current;
 
         public float lateralFriction_Grounded = 5.0f;
@@ -44,9 +44,10 @@ namespace FPSCharacterController
         [HideInInspector] public Vector3 gravityDirection = Vector3.down;
         [HideInInspector] public float gravityStrength = 20.0f; // 9.81f;
         
-        public float moveSpeed_Walking = 50.0f;
-        public float moveSpeed_Running = 75.0f;
-        public float moveSpeed_Crouching = 25.0f;
+        public float moveSpeed_Crouching = 5.0f;
+        public float moveSpeed_Walking = 15.0f;
+        public float moveSpeed_Running = 25.0f;
+        
         [HideInInspector] public float moveSpeed_Current;
 
         public float jumpForce = 4.0f;
@@ -88,23 +89,22 @@ namespace FPSCharacterController
         public float lookSmoothing = 0.01f;
 
         //State machine states
+        public GroundedCrouching groundedCrouching;
         public GroundedStanding groundedStanding;
         public GroundedRunning groundedRunning;
-        public GroundedCrouching groundedCrouching;
-        public AirborneStanding airborneStanding;
         public AirborneCrouching airborneCrouching;
+        public AirborneStanding airborneStanding;
 
         private MovementState currentState;
-
 
         private void Awake()
         {
             playerRB = GetComponent<Rigidbody>();
+            groundedCrouching = new GroundedCrouching(this, settings);
             groundedStanding = new GroundedStanding(this, settings);
             groundedRunning = new GroundedRunning(this, settings);
-            groundedCrouching = new GroundedCrouching(this, settings);
-            airborneStanding = new AirborneStanding(this, settings);
             airborneCrouching = new AirborneCrouching(this, settings);
+            airborneStanding = new AirborneStanding(this, settings);
             currentState = groundedStanding;
 
             settings.height_Current = new FPSControllerSettings.HeightSettings(settings.height_Standing);

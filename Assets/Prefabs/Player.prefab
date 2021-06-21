@@ -293,18 +293,21 @@ MonoBehaviour:
     lateralMoveVector: {x: 0, y: 0, z: 0}
     gravityDirection: {x: 0, y: -1, z: 0}
     gravityStrength: 20
-    moveSpeed_Walking: 35
-    moveSpeed_Running: 50
-    moveSpeed_Crouching: 15
+    moveSpeed_Crouching: 5
+    moveSpeed_Walking: 15
+    moveSpeed_Running: 25
     moveSpeed_Current: 0
     jumpForce: 4
   playerInput: {fileID: 1552085820994727106}
   playerCamera: {fileID: 5651321606145077037}
   playerRB: {fileID: 0}
   capsuleCollider: {fileID: 1547543459}
-  lateralVelocity: {x: 0, y: 0, z: 0}
-  verticalVelocity: {x: 0, y: 0, z: 0}
-  movementForceCached: {x: 0, y: 0, z: 0}
+  localLateralVelocity: {x: 0, y: 0, z: 0}
+  localVerticalVelocity: {x: 0, y: 0, z: 0}
+  lateralForceAddedLastFixedUpdate_World: {x: 0, y: 0, z: 0}
+  totalPredictedLateralVelocity_World: {x: 0, y: 0, z: 0}
+  lateralVelocityDelta_World: {x: 0, y: 0, z: 0}
+  lateralVelocityprojected_World: {x: 0, y: 0, z: 0}
   groundedCheckLayers:
     serializedVersion: 2
     m_Bits: 1

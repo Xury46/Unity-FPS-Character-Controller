@@ -118,8 +118,62 @@ namespace FPSCharacterController
 
         Vector3 movementCancelVector_World;
         
+        public void ApplyLateralMovement_Air()
+        {
+            Vector3 lateralVel_World = controller.transform.TransformDirection(controller.localLateralVelocity);
+            Vector3 lateralWish_World = controller.transform.TransformDirection(settings.lateralMoveVector * settings.moveSpeed_Current);
+            
+            Vector3 projectedVelOntoWish_World = Vector3.Project(lateralVel_World, lateralWish_World); // Project the current velocity onto the wish direction.
+
+            Vector3 MovementVecotorToAdd = projectedVelOntoWish_World - lateralVel_World; // Build a vector from the current velocity to the requested velocity.
+
+            controller.playerRB.AddForce(MovementVecotorToAdd, ForceMode.VelocityChange);
+        }
+
+/*
+        // AIRMOVE STUFF
+        void CalculateDrag(Vector3 direction, Vector3 velocity) {
+            dotP = Vector3.Dot(velocity.normalized, direction);
+            if (dotP < 0) {
+                dotP *= -1;
+                drag = dotP * dragMulti * (1 - dotP * 0.9f);
+                direction = direction + velocity.normalized * 0.1f;
+                body.AddForce(direction * drag * Time.deltaTime, ForceMode.Acceleration);
+            }
+        }
+*/
+
         public void ApplyLateralMovement()
         {
+            float lateralVelMag = controller.transform.TransformDirection(controller.localLateralVelocity).magnitude;
+            Vector3 lateralMoveVector_World = controller.transform.TransformDirection(settings.lateralMoveVector * settings.moveSpeed_Current);
+            float lateralWishMag = lateralMoveVector_World.magnitude;
+
+            float minMoveSpeed = 0.001f;
+
+            if (lateralVelMag < minMoveSpeed && settings.lateralMoveVector == Vector3.zero) controller.playerRB.velocity = Vector3.zero;
+
+            float speedFactor = (settings.moveSpeed_Current - lateralVelMag) / settings.moveSpeed_Current;
+
+            float currentMoveForce = 100.0f;
+            
+            //controller.playerRB.AddForce(speedFactor * currentMoveForce * lateralMoveVector_World, ForceMode.VelocityChange);
+            controller.playerRB.AddForce(speedFactor * currentMoveForce * lateralMoveVector_World, ForceMode.Force);
+
+
+            /*
+
+            if (projectedVelOntoWish_World.magnitude > settings.moveSpeed_Current)
+            {
+
+            }
+
+            */
+
+
+
+
+
             /*
             if (controller.lateralVelocityDelta_World == Vector3.zero) Debug.Log("It's a match!");
             else Debug.Log("It's not a match, delta is: " + controller.lateralVelocityDelta_World);
@@ -134,7 +188,7 @@ namespace FPSCharacterController
             //Vector3 movementCancelVector_World = -controller.lateralVelocityprojected_World; // THIS WAS ALMOST WORKING
             
             
-            Vector3 movementCancelVector_World = controller.lateralForceAddedLastFixedUpdate_World + lateralCollisionImpulses; // THIS WAS ALMOST WORKING
+ //           Vector3 movementCancelVector_World = controller.lateralForceAddedLastFixedUpdate_World + lateralCollisionImpulses; // THIS WAS ALMOST WORKING
             
             
             // TODO LEAVE BEHIND THE REMAINEDER OF THE MAGNITUDE
@@ -142,7 +196,7 @@ namespace FPSCharacterController
             //Vector3 movementCancelVector_World = controller.lateralForceAddedLastFixedUpdate_World.normalized * (projectedMag - controller.lateralForceAddedLastFixedUpdate_World.normalized.magnitude);
 
 
-
+/*
 
             //Vector3 movementCancelVector_World = controller.lateralForceAddedLastFixedUpdate_World - controller.lateralVelocityDelta_World; // Shortent the cancel vector based on the delta
             controller.playerRB.AddForce(-movementCancelVector_World, ForceMode.VelocityChange); // Apply opposite force to cancel previous movement.
@@ -153,6 +207,8 @@ namespace FPSCharacterController
             //controller.totalPredictedLateralVelocity_World += movementForceToAdd; // Attempt to calculate what the velocity will be after adding the movement force.
 
             controller.lateralForceAddedLastFixedUpdate_World = movementForceToAdd; // Cache movement force so it can be used to cancel the movement next frame.
+
+*/
         }
 
         public virtual void ApplyLateralFriction()

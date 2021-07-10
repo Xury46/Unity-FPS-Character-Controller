@@ -124,14 +124,24 @@ namespace FPSCharacterController
             controller.totalPredictedLateralVelocity_World = controller.transform.TransformDirection(controller.localLateralVelocity); // Reset the total velocity prediction to match the lateral velocity at the start of the FixedUpdate
         }
 
+        Vector3 lateralMoveVector_World_Previous;
+
         public void AddLateralMovement()
         {
-            Vector3 lateralMoveVector_World = controller.transform.TransformDirection(settings.lateralMoveVector * settings.moveSpeed_Current);
-            Vector3 verticalVelocity_World = controller.transform.TransformDirection(controller.localVerticalVelocity);
+            Vector3 lateralMoveVector_World_Request = controller.transform.TransformDirection(settings.lateralMoveVector * settings.moveSpeed_Current);
+            Vector3 lateralVelocity_World_Current = controller.transform.TransformDirection(controller.localLateralVelocity);
 
-            velocityToSet_World = lateralMoveVector_World + verticalVelocity_World;
+            float currentVelMag = lateralVelocity_World_Current.magnitude; // How fast are we currently going.
+
+            // If the current lateral velocity is slower than the requested move speed, top speed should be the request, otherwise it should be the velocity so we don't slow down
+            float TopSpeed = currentVelMag < settings.moveSpeed_Current ? settings.moveSpeed_Current : currentVelMag;
+
+            //Vector3 newLateralVel = Vector3.ClampMagnitude(lateralMoveVector_World_Request, TopSpeed);
+            Vector3 newDir = lateralMoveVector_World_Request.magnitude <= 0.0001f ? lateralVelocity_World_Current : lateralMoveVector_World_Request; 
             
-            controller.playerRB.velocity = lateralMoveVector_World;
+            Vector3 newLateralVel = newDir.normalized * TopSpeed;
+
+            velocityToSet_World = newLateralVel;
         }
 
         public virtual void AddLateralFriction()
@@ -158,6 +168,9 @@ namespace FPSCharacterController
 
         private void ApplyVelocity()
         {
+            Vector3 verticalVelocity_World_Current = controller.transform.TransformDirection(controller.localVerticalVelocity);
+            velocityToSet_World += verticalVelocity_World_Current;
+
             controller.playerRB.velocity = velocityToSet_World;
         }
 

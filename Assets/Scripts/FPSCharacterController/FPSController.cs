@@ -34,8 +34,8 @@ namespace FPSCharacterController
         public HeightSettings height_Standing = new HeightSettings(1.75f, 2.0f);
         [HideInInspector] public HeightSettings height_Current;
 
-        public float lateralFriction_Grounded = 5.0f;
-        public float lateralFriction_Airborne = 2.5f;
+        public float lateralFriction_Grounded = 100.0f;
+        public float lateralFriction_Airborne = 10.0f;
         public float lateralFriction_Current;
 
         [HideInInspector] public Vector3 lateralMoveVector;

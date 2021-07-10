@@ -141,7 +141,8 @@ namespace FPSCharacterController
 
         void OnCollisionEnter(Collision other)
         {
-            collisionsAppliedLastFixedUpdate.Add(other);
+            Rigidbody otherRB = other.transform.GetComponent<Rigidbody>();
+            if (otherRB != null) collisionsAppliedLastFixedUpdate.Add(other);
         }
         
         public void InputMove(InputAction.CallbackContext context)

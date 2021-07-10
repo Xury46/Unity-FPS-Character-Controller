@@ -55,7 +55,6 @@ namespace FPSCharacterController
             ApplyYaw();
             
             AddLateralMovement();
-            AddLateralFriction();
             
             ApplyGravity();
 
@@ -128,43 +127,26 @@ namespace FPSCharacterController
 
         public void AddLateralMovement()
         {
-            Vector3 lateralMoveVector_World_Request = controller.transform.TransformDirection(settings.lateralMoveVector * settings.moveSpeed_Current);
-            Vector3 lateralVelocity_World_Current = controller.transform.TransformDirection(controller.localLateralVelocity);
+            Vector3 lateralMoveVector_World_Request = controller.transform.TransformDirection(settings.lateralMoveVector * settings.moveSpeed_Current); // Get the requested lateral movement vector in world space
+            Vector3 lateralVelocity_World_Current = controller.transform.TransformDirection(controller.localLateralVelocity); // Get the current lateral movement velocity vector in world space
 
-            float lateralMoveVector_World_Request_Magnitute = lateralMoveVector_World_Request.magnitude; // How fast would we like to go.
-            float lateralVelocity_World_Current_Magnitute = lateralVelocity_World_Current.magnitude; // How fast are we currently going.
+            float lateralMoveVector_World_Request_Magnitute = lateralMoveVector_World_Request.magnitude; // How fast is the requested movement vector.
+            float lateralVelocity_World_Current_Magnitute = lateralVelocity_World_Current.magnitude; // How fast is the current lateral velocity.
 
-            // If the current lateral velocity is slower than the requested move speed, top speed should be the request, otherwise it should be the velocity so we don't slow down
-            //float TopSpeed = lateralVelocity_World_Current_Magnitute < settings.moveSpeed_Current ? settings.moveSpeed_Current : lateralVelocity_World_Current_Magnitute;
-
+            // Apply friction to the lateral velocity to slow it down over time.
+            // Don't go lower than the requested magnitute, and don't go faster than the lateral velocity prior to the friction.
             lateralVelocity_World_Current_Magnitute = Mathf.Clamp(lateralVelocity_World_Current_Magnitute - (settings.lateralFriction_Current * Time.fixedDeltaTime), lateralMoveVector_World_Request_Magnitute, lateralVelocity_World_Current_Magnitute);
 
-
+            // The new lateral velocity magnitude will be the greater of the two: Requested speed vs Current Speed (after friction is applied).
+            // This will slow down the player without reducing below the requested speed.
+            // TODO slow down the move speed if the requested vector is in the opposite direction.
             float newMagnitute = Mathf.Max(lateralMoveVector_World_Request_Magnitute, lateralVelocity_World_Current_Magnitute);
 
+            // Change direction to the requested vector
+            // TODO blend smoothly to change direction instead of snapping instantly
+            Vector3 newDir = lateralMoveVector_World_Request.magnitude <= 0.0001f ? lateralVelocity_World_Current : lateralMoveVector_World_Request;
 
-            //Vector3 newLateralVel = Vector3.ClampMagnitude(lateralMoveVector_World_Request, TopSpeed);
-            Vector3 newDir = lateralMoveVector_World_Request.magnitude <= 0.0001f ? lateralVelocity_World_Current : lateralMoveVector_World_Request;             
-            
-            
-            
-            //Vector3 newLateralVel = newDir.normalized * TopSpeed;
-            Vector3 newLateralVel = newDir.normalized * newMagnitute;
-
-            //if (TopSpeed > lateralVelocity_World_Current.magnitude)
-
-            velocityToSet_World = newLateralVel;
-        }
-
-        public virtual void AddLateralFriction()
-        {   
-            /*
-            //Vector3 frictionToAdd = controller.totalPredictedLateralVelocity_World - movementCancelVector_World;
-            Vector3 frictionToAdd = controller.totalPredictedLateralVelocity_World;
-            //frictionToAdd *= settings.lateralFriction_Current * Time.fixedDeltaTime;
-            controller.playerRB.AddForce(-frictionToAdd, ForceMode.VelocityChange);
-            controller.totalPredictedLateralVelocity_World -= frictionToAdd;
-            */
+            velocityToSet_World = newDir.normalized * newMagnitute;
         }
 
         public virtual void ApplyJump()

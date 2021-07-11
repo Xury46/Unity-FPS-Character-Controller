@@ -3150,5 +3150,9 @@ PrefabInstance:
       propertyPath: orientation
       value: 
       objectReference: {fileID: 2136136844}
+    - target: {fileID: 7903578257249890864, guid: 67361cda7e2b16e409e29f6e299eb8cb, type: 3}
+      propertyPath: settings.moveSpeedRampUpRate
+      value: 0.1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 67361cda7e2b16e409e29f6e299eb8cb, type: 3}

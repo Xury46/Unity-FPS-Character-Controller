@@ -50,6 +50,10 @@ namespace FPSCharacterController
         
         [HideInInspector] public float moveSpeed_Current;
 
+        public float moveSpeedRampUpMultiplier = 0.0f; // 0-1 blend to ramp up and down the movement input
+        public float moveSpeedRampUpRate = 0.1f; // How long (in seconds) does it take to ramp up to full speed
+        public float moveSpeedRampUpOrDown = 1.0f; // 1 for up, -1 for down
+
         public float jumpForce = 4.0f;
     }
 

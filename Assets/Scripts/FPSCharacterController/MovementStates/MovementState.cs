@@ -39,7 +39,7 @@ namespace FPSCharacterController
 
             foreach (Collision collision in controller.collisionsAppliedLastFixedUpdate)
             {
-                Debug.Log(collision.collider.name + ": " + collision.impulse);
+                //Debug.Log(collision.collider.name + ": " + collision.impulse);
 
                 /*
 
@@ -133,18 +133,37 @@ namespace FPSCharacterController
             float lateralMoveVector_World_Request_Magnitute = lateralMoveVector_World_Request.magnitude; // How fast is the requested movement vector.
             float lateralVelocity_World_Current_Magnitute = lateralVelocity_World_Current.magnitude; // How fast is the current lateral velocity.
 
+            float minMoveMag = 0.0001f;
+            if (lateralMoveVector_World_Request_Magnitute > minMoveMag) settings.moveSpeedRampUpOrDown = 1.0f;
+            else settings.moveSpeedRampUpOrDown = -1.0f;
+
+            float rampGoal = (settings.moveSpeedRampUpOrDown + 1.0f) / 2.0f; // Convert from -1 - 1 to 0 - 1         
+            if (settings.moveSpeedRampUpRate <= 0.0f) settings.moveSpeedRampUpMultiplier = rampGoal; // Avoid dividing by zero and ramp up to full speed immediately
+            else if (settings.moveSpeedRampUpMultiplier != rampGoal) settings.moveSpeedRampUpMultiplier = Mathf.Clamp(settings.moveSpeedRampUpMultiplier + (Time.fixedDeltaTime / settings.moveSpeedRampUpRate) * settings.moveSpeedRampUpOrDown, 0.0f, 1.0f);
+
+
+/*
+            if (lateralMoveVector_World_Request_Magnitute > minMoveMag)
+            {
+                
+                //float dot = Vector3.Dot(lateralMoveVector_World_Request.normalized, lateralVelocity_World_Current.normalized);
+                //Debug.Log(dot);
+            }
+*/
+
+
             // Apply friction to the lateral velocity to slow it down over time.
             // Don't go lower than the requested magnitute, and don't go faster than the lateral velocity prior to the friction.
-            lateralVelocity_World_Current_Magnitute = Mathf.Clamp(lateralVelocity_World_Current_Magnitute - (settings.lateralFriction_Current * Time.fixedDeltaTime), lateralMoveVector_World_Request_Magnitute, lateralVelocity_World_Current_Magnitute);
+            lateralVelocity_World_Current_Magnitute = Mathf.Clamp(lateralVelocity_World_Current_Magnitute - (settings.lateralFriction_Current * Time.fixedDeltaTime), lateralMoveVector_World_Request_Magnitute * settings.moveSpeedRampUpMultiplier, lateralVelocity_World_Current_Magnitute);
 
             // The new lateral velocity magnitude will be the greater of the two: Requested speed vs Current Speed (after friction is applied).
             // This will slow down the player without reducing below the requested speed.
             // TODO slow down the move speed if the requested vector is in the opposite direction.
-            float newMagnitute = Mathf.Max(lateralMoveVector_World_Request_Magnitute, lateralVelocity_World_Current_Magnitute);
+            float newMagnitute = Mathf.Max(lateralMoveVector_World_Request_Magnitute * settings.moveSpeedRampUpMultiplier, lateralVelocity_World_Current_Magnitute);
 
             // Change direction to the requested vector
             // TODO blend smoothly to change direction instead of snapping instantly
-            Vector3 newDir = lateralMoveVector_World_Request.magnitude <= 0.0001f ? lateralVelocity_World_Current : lateralMoveVector_World_Request;
+            Vector3 newDir = lateralMoveVector_World_Request.magnitude <= minMoveMag ? lateralVelocity_World_Current : lateralMoveVector_World_Request;
 
             velocityToSet_World = newDir.normalized * newMagnitute;
         }

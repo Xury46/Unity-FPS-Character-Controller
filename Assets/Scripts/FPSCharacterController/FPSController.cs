@@ -38,7 +38,7 @@ namespace FPSCharacterController
         public float lateralFriction_Airborne = 10.0f;
         public float lateralFriction_Current;
 
-        [HideInInspector] public Vector3 lateralMoveVector;
+        [HideInInspector] public Vector3 localMoveRequest_Lateral;
 
         // Gravity
         [HideInInspector] public Vector3 gravityDirection = Vector3.down;
@@ -52,7 +52,8 @@ namespace FPSCharacterController
 
         public float moveSpeedRampUpMultiplier = 0.0f; // 0-1 blend to ramp up and down the movement input
         public float moveSpeedRampUpRate = 0.1f; // How long (in seconds) does it take to ramp up to full speed
-        public float moveSpeedRampUpOrDown = 1.0f; // 1 for up, -1 for down
+        public float moveSpeedRampDirection = 1.0f; // 1 for up, -1 for down
+        public float moveSpeedMinimum = 0.0001f; // Deadzone for player move request
 
         public float jumpForce = 4.0f;
     }
@@ -65,14 +66,13 @@ namespace FPSCharacterController
         [HideInInspector] public Rigidbody playerRB;
         public CapsuleCollider capsuleCollider;
 
-        [HideInInspector] public List<Collision> collisionsAppliedLastFixedUpdate;
+        [HideInInspector] public Vector3 localVelocity_Lateral;
+        [HideInInspector] public Vector3 localVelocity_Vertical;
 
-        [HideInInspector] public Vector3 localLateralVelocity;
-        [HideInInspector] public Vector3 localVerticalVelocity;
-        [HideInInspector] public Vector3 lateralForceAddedLastFixedUpdate_World; // World space
-        [HideInInspector] public Vector3 totalPredictedLateralVelocity_World;
-        [HideInInspector] public Vector3 lateralVelocityDelta_World;
-        [HideInInspector] public Vector3 lateralVelocityprojected_World;
+        [HideInInspector] public Vector3 worldVelocity_Lateral;
+        [HideInInspector] public Vector3 worldVelocity_Vertical;
+
+        [HideInInspector] public Vector3 worldVelocity_ToApply; // The velocity that will be modified and applied to the player in order to move
 
         public LayerMask groundedCheckLayers;
 
@@ -114,7 +114,6 @@ namespace FPSCharacterController
             currentState = groundedStanding;
 
             settings.height_Current = new FPSControllerSettings.HeightSettings(settings.height_Standing);
-            collisionsAppliedLastFixedUpdate = new List<Collision>(); // Initialize the list
         }
 
         private void Start()
@@ -133,7 +132,6 @@ namespace FPSCharacterController
         void FixedUpdate()
         {
             currentState.OnStateFixedUpdate();
-            collisionsAppliedLastFixedUpdate = new List<Collision>(); // Clear the list of collisions
         }
 
         void LateUpdate()
@@ -142,18 +140,12 @@ namespace FPSCharacterController
             if (smoothMouseInput) SmoothLook();
             else Look();
         }
-
-        void OnCollisionEnter(Collision other)
-        {
-            Rigidbody otherRB = other.transform.GetComponent<Rigidbody>();
-            if (otherRB != null) collisionsAppliedLastFixedUpdate.Add(other);
-        }
         
         public void InputMove(InputAction.CallbackContext context)
         {
             Vector2 inputMovement = context.ReadValue<Vector2>();
-            settings.lateralMoveVector = new Vector3(inputMovement.x, 0.0f, inputMovement.y);
-            settings.lateralMoveVector = Vector3.ClampMagnitude(settings.lateralMoveVector, 1.0f);
+            settings.localMoveRequest_Lateral = new Vector3(inputMovement.x, 0.0f, inputMovement.y);
+            settings.localMoveRequest_Lateral = Vector3.ClampMagnitude(settings.localMoveRequest_Lateral, 1.0f);
             //settings.lateralMoveVector *= Time.fixedDeltaTime;
         }
 

@@ -28,38 +28,15 @@ namespace FPSCharacterController
             if (settings.stateTransition_Progress < 1.0f) StateTransition();
         }
 
-        Vector3 velocityToSet_World;
-        Vector3 lateralCollisionImpulses;
-
         public virtual void OnStateFixedUpdate()
         {
-            velocityToSet_World = Vector3.zero;
-            
-            lateralCollisionImpulses = Vector3.zero;
+            controller.worldVelocity_ToApply = Vector3.zero; // Reset the velocity to zero at the start of each fixed update to start fresh
 
-            foreach (Collision collision in controller.collisionsAppliedLastFixedUpdate)
-            {
-                //Debug.Log(collision.collider.name + ": " + collision.impulse);
-
-                /*
-
-                Vector3 localImpulseVector = controller.transform.InverseTransformDirection(collision.impulse);
-                localImpulseVector = new Vector3(localImpulseVector.x, 0.0f, localImpulseVector.z);
-                localImpulseVector = controller.transform.TransformDirection(localImpulseVector);
-                lateralCollisionImpulses += localImpulseVector;
-                */
-            }
-
-            CalculateLocalVelocityVectors();
-            
+            CalculateVelocityVectors();
             ApplyYaw();
-            
-            AddLateralMovement();
-            
+            AddLateralMovement();            
             ApplyGravity();
-
             ApplyVelocity();
-            
             GroundedCheck();
         }
 
@@ -100,47 +77,36 @@ namespace FPSCharacterController
             settings.lateralFriction_Current = Mathf.Lerp(settings.lateralFriction_Current, lateralFriction_Target, settings.stateTransition_Progress);
         }
 
-        float predictedMag;
-        float projectedMag;
-
-        protected void CalculateLocalVelocityVectors()
+        protected void CalculateVelocityVectors()
 	    {
             // Calculate how fast the player is moving along its local lateral axes.
-		    Vector3 localVelocity = controller.transform.InverseTransformDirection(controller.playerRB.velocity); // Convert the vector to local space
-            controller.localLateralVelocity = new Vector3(localVelocity.x, 0.0f, localVelocity.z); // Remove the y component of the local velocity vector;
-            controller.localVerticalVelocity = Vector3.up * localVelocity.y; // Remove the x, and z components of the local velocity vector;
+		    Vector3 localVelocity = controller.transform.InverseTransformDirection(controller.playerRB.velocity); // Convert the velocity vector to local space
+            controller.localVelocity_Lateral = new Vector3(localVelocity.x, 0.0f, localVelocity.z); // Remove the y component of the local velocity vector
+            controller.localVelocity_Vertical = Vector3.up * localVelocity.y; // Remove the x, and z components of the local velocity vector
 
-            predictedMag = controller.totalPredictedLateralVelocity_World.magnitude;
-            
-            //controller.lateralVelocityprojected_World = Vector3.Project(controller.totalPredictedLateralVelocity_World, controller.transform.TransformDirection(controller.localLateralVelocity));
-            controller.lateralVelocityprojected_World = Vector3.Project(controller.lateralForceAddedLastFixedUpdate_World, controller.transform.TransformDirection(controller.localLateralVelocity));
-
-            projectedMag = controller.lateralVelocityprojected_World.magnitude;
-
-            controller.lateralVelocityDelta_World = controller.totalPredictedLateralVelocity_World - controller.transform.TransformDirection(controller.localLateralVelocity); // What is the difference in lateral velocity between the prediction of last FixedUpdate and the result of the last FixedUpdate;
-            
-            
-            controller.totalPredictedLateralVelocity_World = controller.transform.TransformDirection(controller.localLateralVelocity); // Reset the total velocity prediction to match the lateral velocity at the start of the FixedUpdate
+            controller.worldVelocity_Lateral = controller.transform.TransformDirection(controller.localVelocity_Lateral); // Convert the lateral velocity vector back to world space
+            controller.worldVelocity_Vertical = controller.transform.TransformDirection(controller.localVelocity_Vertical); // Convert the vertical velocity vector back to world space
         }
-
-        Vector3 lateralMoveVector_World_Previous;
 
         public void AddLateralMovement()
         {
-            Vector3 lateralMoveVector_World_Request = controller.transform.TransformDirection(settings.lateralMoveVector * settings.moveSpeed_Current); // Get the requested lateral movement vector in world space
-            Vector3 lateralVelocity_World_Current = controller.transform.TransformDirection(controller.localLateralVelocity); // Get the current lateral movement velocity vector in world space
+            // Get the requested lateral movement vector in world space
+            Vector3 worldMoveRequest_Lateral = controller.transform.TransformDirection(settings.localMoveRequest_Lateral);
+            worldMoveRequest_Lateral *= settings.moveSpeed_Current; // Multiply by the current speed
 
-            float lateralMoveVector_World_Request_Magnitute = lateralMoveVector_World_Request.magnitude; // How fast is the requested movement vector.
-            float lateralVelocity_World_Current_Magnitute = lateralVelocity_World_Current.magnitude; // How fast is the current lateral velocity.
+            // Cache vector magnitudes
+            float worldMoveRequest_Lateral_Magnitute = worldMoveRequest_Lateral.magnitude; // How fast is the requested movement vector.
+            float worldVelocity_Lateral_Magnitute = controller.worldVelocity_Lateral.magnitude; // How fast is the current lateral velocity.
 
-            float minMoveMag = 0.0001f;
-            if (lateralMoveVector_World_Request_Magnitute > minMoveMag) settings.moveSpeedRampUpOrDown = 1.0f;
-            else settings.moveSpeedRampUpOrDown = -1.0f;
+            if (worldMoveRequest_Lateral_Magnitute > settings.moveSpeedMinimum) settings.moveSpeedRampDirection = 1.0f;
+            else settings.moveSpeedRampDirection = -1.0f;
 
-            float rampGoal = (settings.moveSpeedRampUpOrDown + 1.0f) / 2.0f; // Convert from -1 - 1 to 0 - 1         
+            float rampGoal = (settings.moveSpeedRampDirection + 1.0f) / 2.0f; // Convert from -1 - 1 to 0 - 1         
             if (settings.moveSpeedRampUpRate <= 0.0f) settings.moveSpeedRampUpMultiplier = rampGoal; // Avoid dividing by zero and ramp up to full speed immediately
-            else if (settings.moveSpeedRampUpMultiplier != rampGoal) settings.moveSpeedRampUpMultiplier = Mathf.Clamp(settings.moveSpeedRampUpMultiplier + (Time.fixedDeltaTime / settings.moveSpeedRampUpRate) * settings.moveSpeedRampUpOrDown, 0.0f, 1.0f);
+            else if (settings.moveSpeedRampUpMultiplier != rampGoal) settings.moveSpeedRampUpMultiplier = Mathf.Clamp(settings.moveSpeedRampUpMultiplier + (Time.fixedDeltaTime / settings.moveSpeedRampUpRate) * settings.moveSpeedRampDirection, 0.0f, 1.0f);
 
+
+            //controller.lateralVelocityprojected_World = Vector3.Project(controller.lateralForceAddedLastFixedUpdate_World, controller.transform.TransformDirection(controller.velocity_Lateral_Local));
 
 /*
             if (lateralMoveVector_World_Request_Magnitute > minMoveMag)
@@ -154,18 +120,18 @@ namespace FPSCharacterController
 
             // Apply friction to the lateral velocity to slow it down over time.
             // Don't go lower than the requested magnitute, and don't go faster than the lateral velocity prior to the friction.
-            lateralVelocity_World_Current_Magnitute = Mathf.Clamp(lateralVelocity_World_Current_Magnitute - (settings.lateralFriction_Current * Time.fixedDeltaTime), lateralMoveVector_World_Request_Magnitute * settings.moveSpeedRampUpMultiplier, lateralVelocity_World_Current_Magnitute);
+            worldVelocity_Lateral_Magnitute = Mathf.Clamp(worldVelocity_Lateral_Magnitute - (settings.lateralFriction_Current * Time.fixedDeltaTime), worldMoveRequest_Lateral_Magnitute * settings.moveSpeedRampUpMultiplier, worldVelocity_Lateral_Magnitute);
 
             // The new lateral velocity magnitude will be the greater of the two: Requested speed vs Current Speed (after friction is applied).
             // This will slow down the player without reducing below the requested speed.
             // TODO slow down the move speed if the requested vector is in the opposite direction.
-            float newMagnitute = Mathf.Max(lateralMoveVector_World_Request_Magnitute * settings.moveSpeedRampUpMultiplier, lateralVelocity_World_Current_Magnitute);
+            float newMagnitute = Mathf.Max(worldMoveRequest_Lateral_Magnitute * settings.moveSpeedRampUpMultiplier, worldVelocity_Lateral_Magnitute);
 
             // Change direction to the requested vector
             // TODO blend smoothly to change direction instead of snapping instantly
-            Vector3 newDir = lateralMoveVector_World_Request.magnitude <= minMoveMag ? lateralVelocity_World_Current : lateralMoveVector_World_Request;
+            Vector3 newDir = worldMoveRequest_Lateral.magnitude <= settings.moveSpeedMinimum ? controller.worldVelocity_Lateral : worldMoveRequest_Lateral;
 
-            velocityToSet_World = newDir.normalized * newMagnitute;
+            controller.worldVelocity_ToApply = newDir.normalized * newMagnitute;
         }
 
         public virtual void ApplyJump()
@@ -181,10 +147,10 @@ namespace FPSCharacterController
 
         private void ApplyVelocity()
         {
-            Vector3 verticalVelocity_World_Current = controller.transform.TransformDirection(controller.localVerticalVelocity);
-            velocityToSet_World += verticalVelocity_World_Current;
+            Vector3 verticalVelocity_World_Current = controller.transform.TransformDirection(controller.localVelocity_Vertical);
+            controller.worldVelocity_ToApply += verticalVelocity_World_Current;
 
-            controller.playerRB.velocity = velocityToSet_World;
+            controller.playerRB.velocity = controller.worldVelocity_ToApply;
         }
 
         public void GroundedCheck()

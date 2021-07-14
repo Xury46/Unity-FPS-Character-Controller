@@ -287,27 +287,31 @@ MonoBehaviour:
   settings:
     stateTransition_Duration: 1.5
     stateTransition_Progress: 0
-    lateralFriction_Grounded: 100
+    lateralFriction_Grounded: 65
     lateralFriction_Airborne: 10
     lateralFriction_Current: 0
-    lateralMoveVector: {x: 0, y: 0, z: 0}
+    localMoveRequest_Lateral: {x: 0, y: 0, z: 0}
     gravityDirection: {x: 0, y: -1, z: 0}
     gravityStrength: 20
     moveSpeed_Crouching: 5
     moveSpeed_Walking: 15
     moveSpeed_Running: 25
     moveSpeed_Current: 0
+    moveSpeedRampUpMultiplier: 0
+    moveSpeedRampUpRate: 0.1
+    moveSpeedRampDirection: 1
+    moveSpeedMinimum: 0.0001
+    moveSpeedAccelerationRate: 50
     jumpForce: 4
   playerInput: {fileID: 1552085820994727106}
   playerCamera: {fileID: 5651321606145077037}
   playerRB: {fileID: 0}
   capsuleCollider: {fileID: 1547543459}
-  localLateralVelocity: {x: 0, y: 0, z: 0}
-  localVerticalVelocity: {x: 0, y: 0, z: 0}
-  lateralForceAddedLastFixedUpdate_World: {x: 0, y: 0, z: 0}
-  totalPredictedLateralVelocity_World: {x: 0, y: 0, z: 0}
-  lateralVelocityDelta_World: {x: 0, y: 0, z: 0}
-  lateralVelocityprojected_World: {x: 0, y: 0, z: 0}
+  localVelocity_Lateral: {x: 0, y: 0, z: 0}
+  localVelocity_Vertical: {x: 0, y: 0, z: 0}
+  worldVelocity_Lateral: {x: 0, y: 0, z: 0}
+  worldVelocity_Vertical: {x: 0, y: 0, z: 0}
+  worldVelocity_ToApply: {x: 0, y: 0, z: 0}
   groundedCheckLayers:
     serializedVersion: 2
     m_Bits: 1

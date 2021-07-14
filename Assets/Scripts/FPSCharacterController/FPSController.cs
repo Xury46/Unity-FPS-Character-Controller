@@ -34,11 +34,12 @@ namespace FPSCharacterController
         public HeightSettings height_Standing = new HeightSettings(1.75f, 2.0f);
         [HideInInspector] public HeightSettings height_Current;
 
-        public float lateralFriction_Grounded = 100.0f;
+        public float lateralFriction_Grounded = 65.0f;
         public float lateralFriction_Airborne = 10.0f;
-        public float lateralFriction_Current;
+        [HideInInspector] public float lateralFriction_Current;
 
         [HideInInspector] public Vector3 localMoveRequest_Lateral;
+        [HideInInspector] public float localMoveRequest_MinimumMagnitute = 0.0001f; // Deadzone for player move request
 
         // Gravity
         [HideInInspector] public Vector3 gravityDirection = Vector3.down;
@@ -49,11 +50,7 @@ namespace FPSCharacterController
         public float moveSpeed_Running = 25.0f;
         
         [HideInInspector] public float moveSpeed_Current;
-
-        public float moveSpeedRampUpMultiplier = 0.0f; // 0-1 blend to ramp up and down the movement input
-        public float moveSpeedRampUpRate = 0.1f; // How long (in seconds) does it take to ramp up to full speed
-        public float moveSpeedRampDirection = 1.0f; // 1 for up, -1 for down
-        public float moveSpeedMinimum = 0.0001f; // Deadzone for player move request
+        public float moveSpeed_AccelerationRate = 50.0f;
 
         public float jumpForce = 4.0f;
     }

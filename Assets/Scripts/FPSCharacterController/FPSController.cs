@@ -87,7 +87,7 @@ namespace FPSCharacterController
         private float yaw_Velocity; // continuously modified by the smooth damp
         private float yaw_Target;
 
-        public float lookSensitivity = 0.05f;
+        public float lookSensitivity = 5.0f;
         public bool smoothMouseInput = true;
         public float lookSmoothing = 0.01f;
 
@@ -115,6 +115,12 @@ namespace FPSCharacterController
 
         private void Start()
         {
+            #if UNITY_EDITOR
+                lookSensitivity *= 2.0f;
+            #endif
+
+
+
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
 
@@ -151,8 +157,8 @@ namespace FPSCharacterController
             Vector2 inputLook = context.ReadValue<Vector2>();
             float lookThreshold = 0.01f;
             if (inputLook.sqrMagnitude < lookThreshold) return;
-            //inputLook *= lookSensitivity * Time.deltaTime;
-            inputLook *= lookSensitivity;
+            
+            inputLook *= lookSensitivity * Time.deltaTime;
 
             float invert = pitch_Invert ? 1.0f : -1.0f;
             pitch_Target += inputLook.y * invert;

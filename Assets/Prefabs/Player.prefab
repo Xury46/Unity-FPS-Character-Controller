@@ -291,17 +291,14 @@ MonoBehaviour:
     lateralFriction_Airborne: 10
     lateralFriction_Current: 0
     localMoveRequest_Lateral: {x: 0, y: 0, z: 0}
+    localMoveRequest_MinimumMagnitute: 0.0001
     gravityDirection: {x: 0, y: -1, z: 0}
     gravityStrength: 20
     moveSpeed_Crouching: 5
     moveSpeed_Walking: 15
     moveSpeed_Running: 25
     moveSpeed_Current: 0
-    moveSpeedRampUpMultiplier: 0
-    moveSpeedRampUpRate: 0.1
-    moveSpeedRampDirection: 1
-    moveSpeedMinimum: 0.0001
-    moveSpeedAccelerationRate: 50
+    moveSpeed_AccelerationRate: 50
     jumpForce: 4
   playerInput: {fileID: 1552085820994727106}
   playerCamera: {fileID: 5651321606145077037}
@@ -321,7 +318,7 @@ MonoBehaviour:
   pitch_Invert: 0
   yaw_Previous: 0
   yaw_Current: 0
-  lookSensitivity: 0.05
+  lookSensitivity: 5
   smoothMouseInput: 1
   lookSmoothing: 0.01
 --- !u!54 &1610588819573398084
